@@ -1,0 +1,29 @@
+ 
+# === Python ===
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.log
+*.sqlite3
+instance/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# === Node / Frontend ===
+node_modules/
+dist/
+*.local
+npm-debug.log*
+
+# === IDE / System ===
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# === Others ===
+.env
