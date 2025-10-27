@@ -9,4 +9,9 @@ const api = axios.create({
 
 //具体的 API 调用可以在这里定义，后续补充
 
+export function registerUser(userData) {
+  return api.post('/register', userData)
+}
+
+
 export default api
