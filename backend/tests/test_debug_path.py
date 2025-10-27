@@ -1,0 +1,14 @@
+import sys
+import os
+
+def test_show_path():
+    print("\nPYTHONPATH =")
+    for p in sys.path:
+        print("  ", p)
+
+    try:
+        from app.app import create_app
+        print("\n 成功导入 create_app")
+    except Exception as e:
+        print("\n 导入失败：", e)
+        assert False, "导入 app.app.create_app 失败"
