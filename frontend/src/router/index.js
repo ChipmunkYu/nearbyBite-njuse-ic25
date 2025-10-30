@@ -4,6 +4,7 @@ import Register from '../pages/Register.vue'
 import Home from '../pages/Home.vue'
 import First from '../pages/first.vue'
 import Error from '../pages/Error.vue'
+import Recommend from '../pages/Recommend.vue' 
 
 //声明一些基础路由，后续增加页面从此处添加
 
@@ -12,6 +13,7 @@ const routes = [
 {path: '/login', component: Login},
 {path: '/register', component: Register},
 {path: '/first', component: First},
+{path: '/recommend', component: Recommend },
 
 //...新增路由放在这里声明，注意不要放在错误之后！！！
 
