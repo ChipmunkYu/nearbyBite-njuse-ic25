@@ -21,6 +21,7 @@
 - Home.vue - 进入登录或者注册的页面
 - Login.vue - 登录页面
 - Register.vue - 注册页面
+- Recommend.vue - 推荐页面
 
 #### router
 定义路由映射、配置路由行为、管理导航
