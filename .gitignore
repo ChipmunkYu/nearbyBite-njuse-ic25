@@ -13,6 +13,11 @@ instance/
 htmlcov/
 .coverage
 
+# === 数据库文件 ===
+*.db
+*.sqlite
+
+
 # === Node / Frontend ===
 node_modules/
 dist/

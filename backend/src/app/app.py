@@ -1,9 +1,24 @@
 
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+from src.extensions import db, jwt, init_extensions
+#新表添加后请import（可以直接写在User后面或者另起一行重import）
+from src.models import User
+from src.routes.auth import auth_bp
+import os
 
+ # 从 .env 文件加载环境变量
+from dotenv import load_dotenv
 
 def create_app():
+    load_dotenv() 
+
     app = Flask(__name__)
+    CORS(app)
+
+    init_extensions(app)
+  
+    app.register_blueprint(auth_bp)
 
     @app.route('/')
     def index():
@@ -24,37 +39,15 @@ def create_app():
         }
     ])
 
-    # Registion interface (fake data now)
-    @app.route("/auth/register", methods=["POST"])
-    def register():
-        data = request.get_json()
-        username = data.get("username")
-        password = data.get("password")        
-    # 后续丰富判断逻辑
-        if not username :
-            return jsonify({"error": "用户名不能为空"}), 400
-        if not password :
-            return jsonify({"error": "密码不能为空"}), 400
-        
-        return jsonify({"message": "注册成功",
-                        "user" : {"username" : username}
-                        }), 201
-
-    # Login interface (fake data now)
-    @app.route("/auth/login", methods=["POST"])
-    def login():
-        data = request.get_json()
-        username = data.get("username")
-        password = data.get("password")
-        # 后续丰富判断逻辑
-        if username == "testuser" and password == "testpass":
-            return jsonify({"message": "登录成功",
-                            "token" : "fake-jwt-token"
-                            }), 200
-        else:
-            return jsonify({"error": "无效的用户名或密码"}), 401
-
-
+   
+   
+   #数据库初始化
+   # （普通功能的路由定义请写在这之前
+   # 想要分块一点写在routes文件夹，参考auth）
+   
+    with app.app_context():
+         db.create_all()
+   
     return app
 
 
