@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user' 
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
 import Home from '../pages/Home.vue'
@@ -7,13 +8,14 @@ import Error from '../pages/Error.vue'
 import Recommend from '../pages/Recommend.vue' 
 
 //声明一些基础路由，后续增加页面从此处添加
+//需要登录的路由在meta中添加requiresAuth: true
 
 const routes = [
 {path: '/', component: Home},
 {path: '/login', component: Login},
 {path: '/register', component: Register},
-{path: '/first', component: First},
-{path: '/recommend', component: Recommend },
+{path: '/first', component: First, meta: { requiresAuth: true } },
+{path: '/recommend', component: Recommend, meta: { requiresAuth: true } },
 
 //...新增路由放在这里声明，注意不要放在错误之后！！！
 
@@ -36,4 +38,23 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 })
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  
+  if (to.meta.requiresAuth) {
+    if (!userStore.token) {
+      ElMessage.warning('请先登录后再访问～🍱')
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }  
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
 export default router
