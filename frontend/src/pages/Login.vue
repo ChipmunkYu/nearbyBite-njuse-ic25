@@ -7,8 +7,8 @@
     </div>
 
     <el-form :model="form" :rules="rules" ref="loginFormRef">
-      <el-form-item prop="username">
-        <el-input v-model="form.username" placeholder="用户名/手机号" size="large">
+      <el-form-item prop="identifier">
+        <el-input v-model="form.identifier" placeholder="用户名/ID" size="large">
           <template #prefix>
             <el-icon><User /></el-icon>
           </template>
@@ -40,27 +40,42 @@ import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import AuthLayout from '@/components/AuthLayout.vue'
+import { login } from '@/utils/api'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const loginFormRef = ref(null)
 const loading = ref(false)
+const userStore = useUserStore()
 
-const form = reactive({ username: '', password: '' })
+const form = reactive({ identifier: '', password: '' })
 const rules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  identifier: [{ required: true, message: '请输入用户名/ID', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 }
 
 
 // 提交登录表单，跳转页面，可更改
 const submitForm = async () => {
-  await loginFormRef.value.validate(async (valid) => {
+   await loginFormRef.value.validate(async (valid) => {
     if (!valid) return
+    
     loading.value = true
-    try {
-      await new Promise((r) => setTimeout(r, 800))
+  try {
+    const res = await login(form.identifier, form.password)
+    if (res.data.code === 200) {
+      const { access_token, user } = res.data.data
+      userStore.setUser(user, access_token)
       ElMessage.success('欢迎回来！🍱')
-      router.push('/first')
+
+      const redirect = router.currentRoute.value.query.redirect
+      router.push(redirect || '/first')
+    } else {
+      ElMessage.error(res.data.message || '登录失败')
+    }
+  }  catch (err) {
+      console.error('登录错误:', err)
+      ElMessage.error('登录失败，请检查用户名或密码')
     } finally {
       loading.value = false
     }
