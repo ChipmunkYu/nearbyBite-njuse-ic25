@@ -1,4 +1,7 @@
-<!-- 这部分我后期再调整一下，现在出一个大致的模板 -->
+<!-- 这部分我后期再调整一下，现在出一个大致的模板 
+    大家可以通过自己具体内容更改相关文字即可，大概在264行做跳转处理
+      当然如果有更好的想法也可以做相应的调整-->
+ 
 <template>
   <div class="dashboard-container">
     <div class="background">
@@ -42,6 +45,9 @@
           </div>
         </nav>
 
+        <!--做一个展示一周的简易数据统计， 
+        这里暂时做一个假数据，后期有余力再做完善-->
+
         <div class="quick-stats-side">
           <h3>本周数据</h3>
           <div class="stat-side">
@@ -64,33 +70,33 @@
       <!-- 主内容区 -->
       <main class="main-content">
         <!-- 欢迎区域 -->
+         <!-- 这里做了一个根据时间的打招呼，个人觉得比较OK -->
         <div class="welcome-section">
           <h1>{{ timeGreeting }}！<span class="highlight">{{ userStore.user?.username }}</span></h1>
           <p class="subtitle">今天想吃什么？让我们帮您决定吧！</p>
         </div>
 
-        <!-- 主要功能卡片 -->
-        <div class="main-features">
-          <div class="feature-main-card" @click="goToRecommend">
-            <div class="feature-content">
-              <div class="feature-icon-large">🎲</div>
-              <div class="feature-text">
-                <h3>随机推荐今日美食</h3>
-                <p>点击开始，系统将为您智能推荐适合今天的美食</p>
-                <div class="feature-tags">
-                  <span class="tag">智能算法</span>
-                  <span class="tag">个性化</span>
-                  <span class="tag">一键获取</span>
-                </div>
+        <!-- 主要功能（随机推荐） -->
+       <div class="feature-main-card" @click="goToRecommend">
+        <div class="feature-content">
+          <div class="feature-icon-large">🎲</div>
+            <div class="feature-text">
+            <h3>随机推荐今日美食</h3>
+            <p>点击开始，系统将为您智能推荐适合今天的美食，告别选择困难症</p>
+              <div class="feature-tags">
+              <span class="tag">智能算法</span>
+              <span class="tag">个性化推荐</span>
+              <span class="tag">一键获取</span>
+              <span class="tag">实时更新</span>
               </div>
-              <div class="action-button">
-                <el-button type="primary" size="large">立即开始</el-button>
-              </div>
-            </div>
           </div>
+        <div class="action-button">
+        <el-button type="primary" size="large">立即开始 →</el-button>
         </div>
+        </div>
+      </div>
 
-        <!-- 功能网格 -->
+        <!-- 其它功能 -->
         <div class="features-grid">
           <div class="feature-card" @click="goToRestaurants">
             <div class="card-header">
@@ -141,7 +147,8 @@
           </div>
         </div>
 
-        <!-- 今日推荐 -->
+        <!-- 今日推荐 
+         这里也是假数据-->
         <div class="today-section">
           <div class="section-header">
             <h2>今日热门推荐</h2>
@@ -152,21 +159,21 @@
               <div class="food-emoji">🍜</div>
               <div class="food-info">
                 <h5>兰州拉面</h5>
-                <p>评分：4.8 · 距离：1.2km</p>
+                <p>评分：4.8</p>
               </div>
             </div>
             <div class="recommend-card">
               <div class="food-emoji">🍣</div>
               <div class="food-info">
                 <h5>日式寿司</h5>
-                <p>评分：4.6 · 距离：0.8km</p>
+                <p>评分：4.6</p>
               </div>
             </div>
             <div class="recommend-card">
               <div class="food-emoji">🥗</div>
               <div class="food-info">
                 <h5>健康沙拉</h5>
-                <p>评分：4.5 · 距离：1.5km</p>
+                <p>评分：4.5</p>
               </div>
             </div>
           </div>
@@ -254,7 +261,7 @@ const timeGreeting = computed(() => {
   else return '晚上好'
 })
 
-// 各种跳转函数
+// 各种跳转函数，这里对应具体的网址，后续记得根据实际路由调整！！！
 const goToRecommend = () => router.push('/recommend')
 const goToRestaurants = () => ElMessage.info('所有餐馆功能开发中...')
 const goToHistory = () => ElMessage.info('历史记录功能开发中...')
@@ -285,6 +292,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.main-features {
+  margin: 30px 0;
+}
+
 .dashboard-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #f6d365 100%);
@@ -415,55 +427,97 @@ onMounted(() => {
   margin: 0;
 }
 
+/* 主要功能块 */
 .feature-main-card {
   background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
   color: white;
-  padding: 30px;
-  border-radius: 16px;
+  padding: 40px 30px;
+  border-radius: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+  max-width: 100%;
 }
 
 .feature-main-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(255, 107, 107, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(255, 107, 107, 0.4);
 }
 
 .feature-content {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 20px;
 }
 
 .feature-icon-large {
-  font-size: 60px;
+  font-size: 80px;
+  margin-bottom: 10px;
 }
 
 .feature-text h3 {
-  font-size: 24px;
-  margin-bottom: 8px;
+  font-size: 32px;
+  margin-bottom: 16px;
+  font-weight: 600;
 }
 
 .feature-text p {
   opacity: 0.9;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 600px;
 }
 
 .feature-tags {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
 }
 
 .tag {
   background: rgba(255, 255, 255, 0.2);
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 14px;
   backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.tag:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
 }
 
 .action-button {
-  margin-left: auto;
+  margin-top: 10px;
+}
+
+
+.action-button .el-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-weight: 600;
+  padding: 14px 36px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.action-button .el-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3),
+              0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 .features-grid {
@@ -479,6 +533,7 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  text-align: left;
 }
 
 .feature-card:hover {
@@ -496,18 +551,22 @@ onMounted(() => {
 
 .card-icon {
   font-size: 24px;
+  flex-shrink: 0; 
 }
 
 .feature-card h4 {
   margin: 0;
   color: #333;
   font-size: 18px;
+  line-height: 1.3;
 }
 
 .feature-card p {
   color: #666;
   margin-bottom: 15px;
   font-size: 14px;
+   line-height: 1.5; 
+  text-align: left; 
 }
 
 .card-meta {
@@ -521,8 +580,10 @@ onMounted(() => {
   border-radius: 12px;
   font-size: 12px;
   color: #ff6b6b;
+  white-space: nowrap; 
 }
 
+/* 今日推荐区 */
 .today-section {
   background: rgba(255, 255, 255, 0.8);
   padding: 24px;
@@ -557,28 +618,41 @@ onMounted(() => {
 .recommend-card {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 16px;
+  gap: 20px;
+  padding: 20px;
   background: white;
-  border-radius: 12px;
+  border-radius: 20px;
   border: 1px solid rgba(255, 107, 107, 0.1);
+  min-height: 80px; 
 }
 
 .food-emoji {
   font-size: 32px;
+  flex-shrink: 0; 
+}
+
+.food-info {
+  flex: 1;
+  min-width: 0; 
 }
 
 .food-info h5 {
-  margin: 0 0 4px 0;
+  margin: 0 0 6px 0;
   color: #333;
+  font-size: 16px;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 .food-info p {
   margin: 0;
   color: #666;
   font-size: 12px;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
 /* 右侧边栏样式 */
 .right-sidebar {
   display: flex;
@@ -631,6 +705,7 @@ onMounted(() => {
   margin-bottom: 12px;
   color: #ff6b6b;
   font-weight: 500;
+  text-align: left;
 }
 
 .tip-content {
@@ -638,7 +713,59 @@ onMounted(() => {
   font-size: 14px;
   margin: 0;
   line-height: 1.5;
+  text-align: left;
+
 }
+
+/* 欢迎语 */
+.welcome-section h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: #333;
+  text-align: middle; 
+}
+
+.subtitle {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+  text-align: middle;
+}
+
+
+/* 用户信息 */
+.user-profile {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.username {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center; 
+}
+
+.user-level {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin: 0;
+  text-align: center; 
+}
+
+/* 导航项文字 */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+  text-align: left; 
+}
+
 
 .quick-buttons {
   display: flex;
