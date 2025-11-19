@@ -1,5 +1,5 @@
 # tests/test_app.py
-
+# 测试根路径 `/` 是否返回 200 且 message 正确，用于确认整个 Flask 应用正常启动
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))

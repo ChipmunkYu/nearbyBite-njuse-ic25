@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from src.extensions import db
-from src.models.user import User, generate_account_number
+from ..extensions import db
+from ..models.user import User, generate_account_number
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 
@@ -66,3 +66,15 @@ def login():
         
         token = create_access_token(identity = user.id, expires_delta = timedelta(hours = 4))
         return jsonify({"code": 200, "message": "登录成功", "data": {"access_token": token, "user": user.to_dict()}}), 200
+
+#临时接口用于添加测试用户
+@auth_bp.route("/test/add-user", methods=["POST"])
+def add_fake_user():
+    user = User(
+        user_id="test001",
+        username="testuser"
+    )
+    user.set_password("testpass")
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({"message": "Test user added", "user_id": user.id}), 201

@@ -1,3 +1,5 @@
+# test/test_recommend.py
+# 测试 `/restaurants/recommend` 推荐接口返回数据结构与字段正确
 
 def test_recommend_basic(client):
     response = client.get("/restaurants/recommend")

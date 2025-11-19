@@ -1,3 +1,5 @@
+# tests/test_debug_path.py
+# 用于调试 PYTHONPATH，测试模块导入是否成功（非功能性测试）
 import sys
 import os
 

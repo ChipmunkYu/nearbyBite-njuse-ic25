@@ -25,12 +25,14 @@
 
 - user.py - 用户模型定义(User表)
 - '__init__.py' - 包初始化
+- history.py - 历史记录模型
 
 #### routes
 存放路由处理函数
 放在这里让app.py干净一点
 
 - auth.py - 用户注册、登录接口（/auth/register, /auth/login）
+- history.py - 历史记录接口：查询/删除记录
 
 #### utils
 存放工具函数和辅助类，业务逻辑无关的通用功能
@@ -46,8 +48,9 @@
 - test_debug_path.py 
 - test_recommend.py 
 - test_sample.py 
-
+-test_history.py
 ### requirements.txt
+
 Python 依赖包列表
 
 ### pytest.ini
