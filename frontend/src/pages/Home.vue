@@ -82,7 +82,7 @@
 
     <!-- 底部 -->
     <footer class="footer">
-      <p>© 2024 What-to-eat-today · 告别选择困难，从今天开始</p>
+      <p>© 2025 What-to-eat-today · 告别选择困难，从今天开始</p>
     </footer>
   </div>
 </template>

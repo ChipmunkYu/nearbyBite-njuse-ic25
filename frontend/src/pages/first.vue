@@ -233,6 +233,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { InfoFilled } from '@element-plus/icons-vue'
+import request from '@/utils/request'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -242,6 +243,9 @@ const stats = ref({
   favoriteCount: 0,
   daysUsed: 1
 })
+
+const backendData = ref(null);
+const loading = ref(false);
 
 const dailyTips = [
   '尝试一些新的菜系，发现不一样的美味！',
@@ -253,6 +257,7 @@ const dailyTips = [
 
 const dailyTip = ref('')
 
+//时间打招呼的函数
 const timeGreeting = computed(() => {
   const hour = new Date().getHours()
   if (hour >= 5 && hour < 12) return '早上好'
@@ -283,8 +288,32 @@ const logout = async () => {
   } catch {}
 }
 
+const fetchFirstData = async () => {
+  // 这里可以调用后端API获取真实数据
+  if(backendData.value){
+    return;
+  }
+  loading.value = true;
+  try{
+    const response = await request.get('/api/first/info');
+    backendData.value = response.data;
+  }catch(error){
+    console.error('获取用户统计数据失败:',error);
+    
+    backendData.value = {
+      user_id: userStore.user?.user_id,
+      tips: '今日推荐，尝试新菜品！'
+    }
+  }finally{
+    loading.value = false;
+  }
+}
+
 onMounted(() => {
   dailyTip.value = dailyTips[Math.floor(Math.random() * dailyTips.length)]
+  
+  fetchFirstData();
+
   setTimeout(() => {
     stats.value = { recommendCount: 12, favoriteCount: 8, daysUsed: 7 }
   }, 500)

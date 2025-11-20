@@ -1,5 +1,6 @@
 <!-- src/views/Register.vue -->
 <template>
+  <BackHomeButton/>
   <AuthLayout>
     <div class="logo-section">
       <div class="app-logo"></div>
@@ -39,6 +40,7 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import AuthLayout from '@/components/AuthLayout.vue'
 import { register } from '@/utils/api'
+import BackHomeButton from '@/components/BackHomeButton.vue'
 
 const router = useRouter()
 const registerFormRef = ref(null)
