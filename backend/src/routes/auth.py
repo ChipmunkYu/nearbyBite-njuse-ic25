@@ -1,10 +1,15 @@
 from flask import Blueprint, request, jsonify
 from src.extensions import db
 from src.models.user import User, generate_account_number
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token,  create_refresh_token
 from datetime import timedelta
 
-auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
+#注册：POST http://127.0.0.1:5000/api/auth/register
+
+#登录：POST http://127.0.0.1:5000/api/auth/login
+
+
+auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 def make_unique_user_id(k = 8):
     for _ in range(100):
@@ -64,5 +69,8 @@ def login():
         if not user.check_password(password):
             return jsonify({"code": 401, "message": "密码错误"}), 401
         
-        token = create_access_token(identity = user.id, expires_delta = timedelta(hours = 4))
-        return jsonify({"code": 200, "message": "登录成功", "data": {"access_token": token, "user": user.to_dict()}}), 200
+        token = create_access_token(identity = str(user.id), expires_delta = timedelta(hours = 4))
+        refresh_token = create_refresh_token(identity=str(user.id), expires_delta=timedelta(days=7))
+
+        
+        return jsonify({"code": 200, "message": "登录成功", "data": {"access_token": token, "refresh_token": refresh_token, "user": user.to_dict()}}), 200
