@@ -13,6 +13,8 @@
 #### components
 存放可复用的 Vue 组件
 - AuthLayout.vue - 登录注册页面组件（保证相同风格）
+- BackHomeButton.vue - 返回首页的小按钮
+- EmptyState.vue - 页面数为空
 
 #### pages
 完整页面，新添加的页面放在此文件夹
@@ -36,6 +38,8 @@
 放置工具函数、辅助方法
 - api.js - 封装 Axios 工具
 - errorPage.js - 错误页面跳转工具函数
+- loading.js - 全局loading
+- loading.js - 加载状态
 
 ### 根目录文件
 
