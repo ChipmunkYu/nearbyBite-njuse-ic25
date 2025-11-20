@@ -1,4 +1,5 @@
 <template>
+  <BackHomeButton/>
   <AuthLayout>
     <div class="logo-section">
       <div class="app-logo">🍽️</div>
@@ -42,6 +43,8 @@ import { useRouter } from 'vue-router'
 import AuthLayout from '@/components/AuthLayout.vue'
 import { login } from '@/utils/api'
 import { useUserStore } from '@/stores/user'
+import BackHomeButton from '@/components/BackHomeButton.vue'
+import required from '@/utils/request'
 
 const router = useRouter()
 const loginFormRef = ref(null)
@@ -64,8 +67,8 @@ const submitForm = async () => {
   try {
     const res = await login(form.identifier, form.password)
     if (res.data.code === 200) {
-      const { access_token, user } = res.data.data
-      userStore.setUser(user, access_token)
+      const { access_token, refresh_token, user } = res.data.data
+      userStore.setUser(user, access_token, refresh_token)
       ElMessage.success('欢迎回来！🍱')
 
       const redirect = router.currentRoute.value.query.redirect
@@ -75,7 +78,7 @@ const submitForm = async () => {
     }
   }  catch (err) {
       console.error('登录错误:', err)
-      ElMessage.error('登录失败，请检查用户名或密码')
+      ElMessage.error(err.response?.data?.message || '登录失败，请检查用户名或密码')
     } finally {
       loading.value = false
     }
