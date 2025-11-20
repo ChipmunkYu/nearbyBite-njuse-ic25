@@ -1,10 +1,21 @@
 from flask import Blueprint, request, jsonify
+<<<<<<< HEAD
 from ..extensions import db
 from ..models.user import User, generate_account_number
 from flask_jwt_extended import create_access_token
+=======
+from src.extensions import db
+from src.models.user import User, generate_account_number
+from flask_jwt_extended import create_access_token,  create_refresh_token
+>>>>>>> 280fcfc5849cf76daef84436d931fff0a7eeed65
 from datetime import timedelta
 
-auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
+#注册：POST http://127.0.0.1:5000/api/auth/register
+
+#登录：POST http://127.0.0.1:5000/api/auth/login
+
+
+auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 def make_unique_user_id(k = 8):
     for _ in range(100):
@@ -59,11 +70,12 @@ def login():
         if not user:
             user = User.query.filter_by(user_id=identifier).first()
             if not user :
-                return jsonify({"code": 401, "message": "无效用户"}), 401
+                return jsonify({"code": 400, "message": "无效用户"}), 400
 
         if not user.check_password(password):
-            return jsonify({"code": 401, "message": "密码错误"}), 401
+            return jsonify({"code": 400, "message": "密码错误"}), 400
         
+<<<<<<< HEAD
         token = create_access_token(identity = user.id, expires_delta = timedelta(hours = 4))
         return jsonify({"code": 200, "message": "登录成功", "data": {"access_token": token, "user": user.to_dict()}}), 200
 
@@ -78,3 +90,10 @@ def add_fake_user():
     db.session.add(user)
     db.session.commit()
     return jsonify({"message": "Test user added", "user_id": user.id}), 201
+=======
+        token = create_access_token(identity = str(user.id), expires_delta = timedelta(hours = 4))
+        refresh_token = create_refresh_token(identity=str(user.id), expires_delta=timedelta(days=7))
+
+        
+        return jsonify({"code": 200, "message": "登录成功", "data": {"access_token": token, "refresh_token": refresh_token, "user": user.to_dict()}}), 200
+>>>>>>> 280fcfc5849cf76daef84436d931fff0a7eeed65

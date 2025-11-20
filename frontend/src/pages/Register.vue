@@ -1,5 +1,6 @@
 <!-- src/views/Register.vue -->
 <template>
+  <BackHomeButton/>
   <AuthLayout>
     <div class="logo-section">
       <div class="app-logo"></div>
@@ -10,10 +11,6 @@
     <el-form :model="form" :rules="rules" ref="registerFormRef">
       <el-form-item prop="username">
         <el-input v-model="form.username" placeholder="用户名" size="large" />
-      </el-form-item>
-
-      <el-form-item prop="email">
-        <el-input v-model="form.email" placeholder="邮箱地址" size="large" />
       </el-form-item>
 
       <el-form-item prop="password">
@@ -42,24 +39,30 @@ import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import AuthLayout from '@/components/AuthLayout.vue'
+import { register } from '@/utils/api'
+import BackHomeButton from '@/components/BackHomeButton.vue'
 
 const router = useRouter()
 const registerFormRef = ref(null)
 const loading = ref(false)
 const form = reactive({
   username: '',
-  email: '',
   password: '',
   confirmPassword: ''
 })
 
 const rules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min : 2, max: 15, message: '用户名长度应在2到15个字符之间', trigger: 'blur' }
+  ],
   email: [
     { required: true, message: '请输入邮箱地址', trigger: 'blur' },
     { type: 'email', message: '邮箱格式错误', trigger: ['blur', 'change'] }
   ],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' },
+             { min : 6, message: '密码长度不能少于6位', trigger: 'blur' }    
+  ],
   confirmPassword: [
     { required: true, message: '请确认密码', trigger: 'blur' },
     {
@@ -77,9 +80,27 @@ const submitForm = async () => {
     if (!valid) return
     loading.value = true
     try {
-      await new Promise((r) => setTimeout(r, 800))
-      ElMessage.success('注册成功，欢迎加入！✨')
-      router.push('/login')
+      const res = await register(form.username, form.password)
+      
+      if (res.data.code === 200) {
+        ElMessage.success('注册成功，欢迎加入！✨')
+        router.push('/login')
+      } else {
+        ElMessage.error(res.data.message || '注册失败')
+      }
+    } catch (err) {
+      console.error('注册错误:', err)
+      if(err.response?.status == 400){
+        const errorMsg = err.response?.data?.message || ''
+        if (errorMsg.includes('用户') || errorMsg.includes('username') || errorMsg.includes('已存在')) {
+          ElMessage.error('用户名已存在，请重新输入')
+        }
+        else{
+          ElMessage.error(errorMsg || '请检查填写内容')
+        }
+      }else {
+        ElMessage.error('注册失败，请稍后重试')
+      }
     } finally {
       loading.value = false
     }
