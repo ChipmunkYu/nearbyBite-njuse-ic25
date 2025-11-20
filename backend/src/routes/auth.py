@@ -64,10 +64,10 @@ def login():
         if not user:
             user = User.query.filter_by(user_id=identifier).first()
             if not user :
-                return jsonify({"code": 401, "message": "无效用户"}), 401
+                return jsonify({"code": 400, "message": "无效用户"}), 400
 
         if not user.check_password(password):
-            return jsonify({"code": 401, "message": "密码错误"}), 401
+            return jsonify({"code": 400, "message": "密码错误"}), 400
         
         token = create_access_token(identity = str(user.id), expires_delta = timedelta(hours = 4))
         refresh_token = create_refresh_token(identity=str(user.id), expires_delta=timedelta(days=7))
