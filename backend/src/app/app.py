@@ -1,5 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+from ..extensions import db, jwt, init_extensions
+=======
+>>>>>>> dev-d
 from src.extensions import db, jwt, init_extensions
 #新表添加后请import（可以直接写在User后面或者另起一行重import）
 from src.models import User
@@ -8,6 +14,10 @@ from src.routes.home import home_bp
 from src.routes.first import first_bp
 from src.routes.recommend import recommend_bp
 import os
+<<<<<<< HEAD
+=======
+>>>>>>> 280fcfc5849cf76daef84436d931fff0a7eeed65
+>>>>>>> dev-d
 
 
 # 模型：新增 History 表（用于历史记录）
@@ -30,6 +40,39 @@ def create_app():
     app = Flask(__name__)
     CORS(app)  # 允许跨域
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+    init_extensions(app)  # 初始化 db、jwt 等扩展
+
+    # 注册接口蓝图（路由拆分写在 routes 文件夹）
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(history_bp)  # 新增：注册 history 模块路由
+
+    # 默认主页路由（测试用）
+    @app.route('/')
+    def index():
+        return {'message': 'Hello from Flask backend!'}
+
+    # 示例推荐接口（测试用，未来 B 模块成员会替换）
+    @app.route("/restaurants/recommend", methods=["GET"])
+    def recommend():
+        return jsonify([
+            {
+                "name": "麦当劳",
+                "location": "中山路",
+                "tags": ["快餐", "人均30"]
+            },
+            {
+                "name": "肯德基",
+                "location": "南大门口",
+                "tags": ["鸡肉", "人均35"]
+            }
+        ])
+
+    # 自动建表（只在首次创建数据库时有用）
+=======
+>>>>>>> dev-d
     init_extensions(app)
     
     # 注册蓝图
@@ -44,6 +87,10 @@ def create_app():
    #数据库初始化
    # （普通功能的路由定义请写在这之前
    
+<<<<<<< HEAD
+=======
+>>>>>>> 280fcfc5849cf76daef84436d931fff0a7eeed65
+>>>>>>> dev-d
     with app.app_context():
         db.create_all()
 

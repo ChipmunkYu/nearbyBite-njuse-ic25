@@ -1,7 +1,19 @@
 from flask import Blueprint, request, jsonify
+<<<<<<< HEAD
 from src.extensions import db
 from src.models.user import User, generate_account_number
 from flask_jwt_extended import create_access_token,  create_refresh_token
+=======
+<<<<<<< HEAD
+from ..extensions import db
+from ..models.user import User, generate_account_number
+from flask_jwt_extended import create_access_token
+=======
+from src.extensions import db
+from src.models.user import User, generate_account_number
+from flask_jwt_extended import create_access_token,  create_refresh_token
+>>>>>>> 280fcfc5849cf76daef84436d931fff0a7eeed65
+>>>>>>> dev-d
 from datetime import timedelta
 
 #注册：POST http://127.0.0.1:5000/api/auth/register
@@ -69,8 +81,31 @@ def login():
         if not user.check_password(password):
             return jsonify({"code": 400, "message": "密码错误"}), 400
         
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+        token = create_access_token(identity = user.id, expires_delta = timedelta(hours = 4))
+        return jsonify({"code": 200, "message": "登录成功", "data": {"access_token": token, "user": user.to_dict()}}), 200
+
+#临时接口用于添加测试用户
+@auth_bp.route("/test/add-user", methods=["POST"])
+def add_fake_user():
+    user = User(
+        user_id="test001",
+        username="testuser"
+    )
+    user.set_password("testpass")
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({"message": "Test user added", "user_id": user.id}), 201
+=======
+>>>>>>> dev-d
         token = create_access_token(identity = str(user.id), expires_delta = timedelta(hours = 4))
         refresh_token = create_refresh_token(identity=str(user.id), expires_delta=timedelta(days=7))
 
         
         return jsonify({"code": 200, "message": "登录成功", "data": {"access_token": token, "refresh_token": refresh_token, "user": user.to_dict()}}), 200
+<<<<<<< HEAD
+=======
+>>>>>>> 280fcfc5849cf76daef84436d931fff0a7eeed65
+>>>>>>> dev-d
