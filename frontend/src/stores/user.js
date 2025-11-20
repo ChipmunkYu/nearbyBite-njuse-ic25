@@ -34,7 +34,7 @@ export const useUserStore = defineStore('user', {
       localStorage.removeItem('user')
       localStorage.removeItem('token')
       localStorage.removeItem('refreshToken')
-      router.push('/')  
+      router.push('/login')  
     }
   }
 })
