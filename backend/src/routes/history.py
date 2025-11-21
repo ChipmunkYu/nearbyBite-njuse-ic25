@@ -1,12 +1,11 @@
-# 功能：提供用户浏览记录的查询、添加和删除接口
+# src/routes/history.py
 
-from flask import Blueprint, jsonify, request
-from ..extensions import db
-from ..models.history import History
+from flask import Blueprint, request, jsonify
+from src.extensions import db
+from src.models.history import History
 from datetime import datetime
 
-# ✅ url_prefix 为空，方便直接定义完整路径
-history_bp = Blueprint("history", __name__, url_prefix="")
+history_bp = Blueprint('history', __name__)
 
 # 1️⃣ 添加历史记录（POST /users/<user_id>/history）
 @history_bp.route("/api/users/<string:user_id>/history", methods=["POST"])
@@ -19,14 +18,27 @@ def add_user_history(user_id):
     """
     data = request.get_json()
     restaurant_name = data.get("restaurant_name")
-    timestamp_str = data.get("timestamp")
-    timestamp = datetime.fromisoformat(timestamp_str) if timestamp_str else datetime.utcnow()
+    timestamp = data.get("timestamp")  # ISO8601 字符串
 
-    record = History(user_id=user_id, restaurant_name=restaurant_name, timestamp=timestamp)
+    if not restaurant_name:
+        return jsonify({"message": "restaurant_name is required"}), 400
+
+    # timestamp 解析（如果前端传 ISO8601）
+    if timestamp:
+        timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+    else:
+        timestamp = datetime.utcnow()
+
+    record = History(
+        user_id=user_id,
+        restaurant_name=restaurant_name,
+        timestamp=timestamp
+    )
+
     db.session.add(record)
     db.session.commit()
 
-    return jsonify({"message": "History record added successfully"}), 201
+    return jsonify({"message": "created", "data": record.to_dict()}), 201
 
 
 # 2️⃣ 查询某用户历史记录（GET /users/<user_id>/history）
@@ -51,9 +63,9 @@ def delete_history(record_id):
     #record = History.query.get(record_id)
     record = db.session.get(History, record_id)
     if not record:
-        return jsonify({"error": "Record not found"}), 404
+        return jsonify({"message": "record not found"}), 404
 
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "History record deleted successfully"}), 200
 
+    return jsonify({"message": "deleted"}), 200

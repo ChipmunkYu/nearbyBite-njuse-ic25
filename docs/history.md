@@ -1,14 +1,15 @@
-# 📘 History 模块 API 文档
 
-## #️⃣ 概述（History 模块）
+
+# History 模块 API 文档
+## 概述（History 模块）
 
 History 模块用于记录用户的浏览行为。每当用户查看一个餐馆的详情页（或点开推荐结果），系统可以选择调用 History API 记录一次浏览行为。
 
 包括以下能力：
 
-* 📌 添加浏览记录
-* 📌 获取用户浏览历史列表
-* 📌 删除指定历史记录
+*  添加浏览记录
+*  获取用户浏览历史列表
+*  删除指定历史记录
 
 History 模块的数据结构不会与业务逻辑强耦合，前后端通过 JSON 通信。
 
@@ -18,8 +19,7 @@ History 模块的数据结构不会与业务逻辑强耦合，前后端通过 JS
 
 # 🏗 数据结构定义（Data Contract）
 
-### 🧍‍♂️ User（与你本模块相关的字段）
-
+### User
 ```json
 {
   "user_id": "string"
@@ -30,7 +30,7 @@ History 模块的数据结构不会与业务逻辑强耦合，前后端通过 JS
 
 ---
 
-### 📝 History Record（浏览记录）
+### History Record（浏览记录）
 
 后端在所有接口中返回该结构：
 
@@ -56,11 +56,11 @@ History 模块的数据结构不会与业务逻辑强耦合，前后端通过 JS
 
 ---
 
-# 🚀 API 详情
+# API 详情
 
 ---
 
-# 1️⃣ 添加浏览记录（Add History）
+##  添加浏览记录（Add History）
 
 ### **POST /users/{user_id}/history**
 
@@ -106,7 +106,7 @@ History 模块的数据结构不会与业务逻辑强耦合，前后端通过 JS
 
 ---
 
-# 2️⃣ 查询用户历史记录（Get History）
+##  查询用户历史记录（Get History）
 
 ### **GET /users/{user_id}/history**
 
@@ -150,7 +150,7 @@ History 模块的数据结构不会与业务逻辑强耦合，前后端通过 JS
 
 ---
 
-# 3️⃣ 删除历史记录（Delete History）
+##  删除历史记录（Delete History）
 
 ### **DELETE /history/{history_id}**
 
@@ -186,7 +186,7 @@ History 模块的数据结构不会与业务逻辑强耦合，前后端通过 JS
 
 ---
 
-# 🧪 示例（Postman）
+# 示例（Postman）
 
 ### POST 添加记录
 
