@@ -36,7 +36,12 @@
 
 #### utils
 放置工具函数、辅助方法
-- api.js - 封装 Axios 工具
+
+### api  封装 Axios 工具
+- auth.js -  登录 / 注册 / token
+- history.js - 浏览记录
+- index.js - 统一出口（添加新文件后，之后记得在此处添加相应export!!!）
+
 - errorPage.js - 错误页面跳转工具函数
 - loading.js - 全局loading
 - loading.js - 加载状态
