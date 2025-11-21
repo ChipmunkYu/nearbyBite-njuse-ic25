@@ -9,7 +9,7 @@ from datetime import datetime
 history_bp = Blueprint("history", __name__, url_prefix="")
 
 # 1️⃣ 添加历史记录（POST /users/<user_id>/history）
-@history_bp.route("/users/<string:user_id>/history", methods=["POST"])
+@history_bp.route("/api/users/<string:user_id>/history", methods=["POST"])
 def add_user_history(user_id):
     """
     新增浏览记录：
@@ -30,7 +30,7 @@ def add_user_history(user_id):
 
 
 # 2️⃣ 查询某用户历史记录（GET /users/<user_id>/history）
-@history_bp.route("/users/<string:user_id>/history", methods=["GET"])
+@history_bp.route("/api/users/<string:user_id>/history", methods=["GET"])
 def get_user_history(user_id):
     """
     查询用户浏览记录：
@@ -48,7 +48,8 @@ def delete_history(record_id):
     - 找不到 → 返回 404
     - 成功删除 → 返回 200
     """
-    record = History.query.get(record_id)
+    #record = History.query.get(record_id)
+    record = db.session.get(History, record_id)
     if not record:
         return jsonify({"error": "Record not found"}), 404
 
