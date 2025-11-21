@@ -39,9 +39,11 @@ import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import AuthLayout from '@/components/AuthLayout.vue'
-import { register } from '@/utils/api'
+import { register, login } from '@/utils/api'
 import BackHomeButton from '@/components/BackHomeButton.vue'
+import { useUserStore } from '@/stores/user'
 
+const userStore = useUserStore()
 const router = useRouter()
 const registerFormRef = ref(null)
 const loading = ref(false)
@@ -76,36 +78,44 @@ const rules = {
 }
 
 const submitForm = async () => {
-  await registerFormRef.value.validate(async (valid) => {
-    if (!valid) return
-    loading.value = true
-    try {
-      const res = await register(form.username, form.password)
-      
-      if (res.data.code === 200) {
-        ElMessage.success('注册成功，欢迎加入！✨')
-        router.push('/login')
+  const valid = await registerFormRef.value.validate()
+  if (!valid) return
+
+  loading.value = true
+  try {
+    const resRegister = await register(form.username, form.password)
+    if (resRegister.data.code === 201) {
+      ElMessage.success('注册成功，正在登录...✨')
+      // 直接调用 login
+      const resLogin = await login(form.username, form.password)
+      if (resLogin.data.code === 200) {
+        ElMessage.success('欢迎加入我们！🍱')
+        const { access_token, refresh_token, user } = resLogin.data.data
+        userStore.setUser(user, access_token, refresh_token)
+        router.push('/first')
       } else {
-        ElMessage.error(res.data.message || '注册失败')
+        ElMessage.error(resLogin.data.message || '登录失败')
       }
-    } catch (err) {
-      console.error('注册错误:', err)
-      if(err.response?.status == 400){
-        const errorMsg = err.response?.data?.message || ''
-        if (errorMsg.includes('用户') || errorMsg.includes('username') || errorMsg.includes('已存在')) {
-          ElMessage.error('用户名已存在，请重新输入')
-        }
-        else{
-          ElMessage.error(errorMsg || '请检查填写内容')
-        }
-      }else {
-        ElMessage.error('注册失败，请稍后重试')
-      }
-    } finally {
-      loading.value = false
+    } else {
+      ElMessage.error(resRegister.data.message || '注册失败')
     }
-  })
+  } catch (err) {
+    console.error('注册错误:', err)
+    const errorMsg = err.response?.data?.message || ''
+    if (err.response?.status === 400) {
+      if (errorMsg.includes('用户') || errorMsg.includes('username') || errorMsg.includes('已存在')) {
+        ElMessage.error('用户名已存在，请重新输入')
+      } else {
+        ElMessage.error(errorMsg || '请检查填写内容')
+      }
+    } else {
+      ElMessage.error('注册失败，请稍后重试')
+    }
+  } finally {
+    loading.value = false
+  }
 }
+
 </script>
 
 <style scoped>

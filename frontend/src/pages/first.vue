@@ -233,7 +233,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { InfoFilled } from '@element-plus/icons-vue'
-import request from '@/utils/request'
+import request from '@/utils/api/request'
 
 const router = useRouter()
 const userStore = useUserStore()

@@ -2,13 +2,14 @@ import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import router from '@/router'
 import { ElMessage } from 'element-plus'
-import { goErrorPage } from './errorPage'
-import { showLoading, hideLoading } from './loading'
+import { goErrorPage } from '../errorPage'
+import { showLoading, hideLoading } from '../loading'
 
 
 const request = axios.create({
   baseURL: 'http://127.0.0.1:5000',
-  timeout: 5000
+  timeout: 5000,
+  validateStatus: status => status >= 200 && status < 300
 })
 
 // 请求拦截：自动加 token

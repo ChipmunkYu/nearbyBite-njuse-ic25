@@ -44,7 +44,6 @@ import AuthLayout from '@/components/AuthLayout.vue'
 import { login } from '@/utils/api'
 import { useUserStore } from '@/stores/user'
 import BackHomeButton from '@/components/BackHomeButton.vue'
-import required from '@/utils/request'
 
 const router = useRouter()
 const loginFormRef = ref(null)
@@ -66,6 +65,7 @@ const submitForm = async () => {
     loading.value = true
   try {
     const res = await login(form.identifier, form.password)
+    console.log('登录返回:', res.data)
     if (res.data.code === 200) {
       const { access_token, refresh_token, user } = res.data.data
       userStore.setUser(user, access_token, refresh_token)
