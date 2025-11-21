@@ -2,7 +2,7 @@
 # 测试 `/restaurants/recommend` 推荐接口返回数据结构与字段正确
 
 def test_recommend_basic(client):
-    response = client.get("/restaurants/recommend")
+    response = client.get("/api/recommend/restaurants")
     #可访问性
     assert response.status_code == 200  
 

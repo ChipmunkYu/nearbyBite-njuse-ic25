@@ -9,7 +9,7 @@ def test_add_history(client):
         "restaurant_name": "麦当劳",
         "timestamp": "2025-11-06T13:00:00"
     }
-    response = client.post("/users/test001/history", json=payload)
+    response = client.post("/api/users/test001/history", json=payload)
     assert response.status_code == 201
     data = response.get_json()
     assert "message" in data
@@ -17,7 +17,7 @@ def test_add_history(client):
 
 def test_get_history(client):
     """测试获取用户历史记录接口"""
-    response = client.get("/users/test001/history")
+    response = client.get("/api/users/test001/history")
     assert response.status_code == 200
     data = response.get_json()
     assert isinstance(data, list)
@@ -28,7 +28,7 @@ def test_get_history(client):
 def test_delete_history(client):
     """测试删除历史记录接口"""
     # 先获取一条记录
-    get_response = client.get("/users/test001/history")
+    get_response = client.get("/api/users/test001/history")
     data = get_response.get_json()
     if not data:
         assert False, "没有历史记录可删除"
