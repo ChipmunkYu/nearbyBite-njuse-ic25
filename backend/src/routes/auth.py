@@ -40,9 +40,19 @@ def register():
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
+   
+    access_token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=4))
+    refresh_token = create_refresh_token(identity=str(user.id), expires_delta=timedelta(days=7))
 
-    return jsonify({"code":201, "message" : "注册成功","data" : 
-                    {"user_id" : user.user_id,"username" : user.username}}), 201
+    return jsonify({
+        "code": 201,
+        "message": "注册成功",
+        "data": {
+            "user": user.to_dict(),
+            "access_token": access_token,
+            "refresh_token": refresh_token
+        }
+    }), 201
 
     
 @auth_bp.route('/login', methods=['POST'])
