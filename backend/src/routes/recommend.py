@@ -2,14 +2,15 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-#访问路径：http://127.0.0.1:5000/api/restaurants/recommend
+#访问路径：http://127.0.0.1:5000/api/recommend/restaurants
+
 
 recommend_bp = Blueprint("recommend", __name__, url_prefix="/api/recommend")
 
 @recommend_bp.route("/restaurants", methods=["GET"])
 
-#表示需要身份验证才能访问此路由，根据具体实际情况决定是否需要添加
-@jwt_required()
+#表示需要身份验证才能访问此路由，根据具体实际情况决定是否需要添加,这里相关的同学可以不用管，只用写业务逻辑就行（可以直接删除）
+#@jwt_required()
 
 def recommend():
         # 如果用了 @jwt_required() 最好使用这个
