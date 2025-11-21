@@ -9,7 +9,7 @@ def test_show_path():
         print("  ", p)
 
     try:
-        from app.app import create_app
+        from src.app.app import create_app
         print("\n 成功导入 create_app")
     except Exception as e:
         print("\n 导入失败：", e)
