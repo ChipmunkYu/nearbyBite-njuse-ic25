@@ -4,12 +4,12 @@ import os
 import pytest
 
 # ✅ 关键：添加 backend 的上一级目录（项目根目录）
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 print("✔ 已将路径加入 sys.path:", ROOT_DIR)
 
-from backend.src.app.app import create_app  # ✅ 注意这里的路径改为 backend.src.app
+from src.app.app import create_app  # ✅ 注意这里的路径改为 backend.src.app
 
 @pytest.fixture
 def client():
