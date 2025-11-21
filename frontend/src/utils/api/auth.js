@@ -1,5 +1,5 @@
 // src/utils/api/auth.js
-import request from '../request.js'
+import request from './request.js'
 
 export const register = (username, password) => {
   return request.post('/api/auth/register', {

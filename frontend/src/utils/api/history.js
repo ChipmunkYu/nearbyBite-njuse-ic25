@@ -1,5 +1,5 @@
 // src/utils/api/history.js
-import request from '../request.js'
+import request from './request.js'
 
 // 创建历史记录
 export const addHistory = (userId, restaurantName) => {
