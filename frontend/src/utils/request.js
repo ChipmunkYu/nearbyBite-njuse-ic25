@@ -38,7 +38,7 @@ function onRefreshed(newToken) {
 request.interceptors.response.use(
    res => {
      hideLoading()
-    return res.data   
+    return res
   },
   async err => {
     hideLoading()  

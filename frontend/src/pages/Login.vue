@@ -78,7 +78,7 @@ const submitForm = async () => {
     }
   }  catch (err) {
       console.error('登录错误:', err)
-      ElMessage.error(err.response?.data?.message || '登录失败，请检查用户名或密码')
+      //ElMessage.error(err.response?.data?.message || '登录失败，请检查用户名或密码')
     } finally {
       loading.value = false
     }
