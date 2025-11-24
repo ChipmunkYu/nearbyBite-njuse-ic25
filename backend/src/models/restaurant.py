@@ -18,9 +18,12 @@ class Restaurant(db.Model):
     types = db.Column(db.String(200))
     flavors = db.Column(db.String(200))
 
-    # 经纬度（高德爬下来的坐标填这里）
-    lat = db.Column(db.Float)
-    lng = db.Column(db.Float) 
+    # 经纬度暂未启用：
+    # 当前前端使用“伪距离”，无需真实坐标，因此先注释。
+    # 未来若启用真实距离计算，取消注释即可。
+    # lat = db.Column(db.Float)
+    # lng = db.Column(db.Float)
+
 
     def to_dict(self):
         return {
@@ -32,6 +35,9 @@ class Restaurant(db.Model):
             "rating": self.rating,
             "types": self.types.split(",") if self.types else [],
             "flavors": self.flavors.split(",") if self.flavors else [],
-            "lat": self.lat,
-            "lng": self.lng,
+            # 经纬度暂未启用：
+            # 当前前端使用“伪距离”，无需真实坐标，因此先注释。
+            # 未来若启用真实距离计算，取消注释即可。
+            #"lat": self.lat,
+            #"lng": self.lng,
         }
