@@ -1,8 +1,5 @@
 History 模块 API 文档（v1.0）
 
-文档位置建议：
-docs/api/history.md 或 docs/API.md 中的一个 section
-
 # 1. 模块概述
 
 History（浏览历史）模块用于记录用户在 “随机推荐页（Recommend.vue）” 中 查看过的餐馆。
