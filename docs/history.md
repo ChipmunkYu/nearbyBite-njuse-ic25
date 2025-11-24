@@ -1,215 +1,206 @@
+History 模块 API 文档（v1.0）
 
+文档位置建议：
+docs/api/history.md 或 docs/API.md 中的一个 section
 
-# History 模块 API 文档
-## 概述（History 模块）
+# 1. 模块概述
 
-History 模块用于记录用户的浏览行为。每当用户查看一个餐馆的详情页（或点开推荐结果），系统可以选择调用 History API 记录一次浏览行为。
+History（浏览历史）模块用于记录用户在 “随机推荐页（Recommend.vue）” 中 查看过的餐馆。
 
-包括以下能力：
+触发方式：
 
-*  添加浏览记录
-*  获取用户浏览历史列表
-*  删除指定历史记录
+只要推荐详情弹窗打开，即认为用户浏览了一次推荐餐馆。
 
-History 模块的数据结构不会与业务逻辑强耦合，前后端通过 JSON 通信。
+记录内容包括：
 
----
+哪个用户浏览了
 
----
+浏览的餐馆名称
 
-# 🏗 数据结构定义（Data Contract）
+浏览时间
 
-### User
-```json
+该模块用于：
+
+用户行为分析
+
+历史记录页展示
+
+推荐偏好挖掘（未来扩展）
+
+# 2. 数据结构（History Record）
+字段名	类型	说明
+id	int	主键
+user_id	string / int	浏览的用户 ID
+restaurant_name	string	推荐的餐馆名
+timestamp	string (ISO8601)	浏览时间，如：2025-11-06T10:00:00Z
+
+返回 JSON 中包含 fields：
+
 {
-  "user_id": "string"
-}
-```
-
-> **说明**：History 模块只依赖 user_id；username、密码等字段不影响该模块。
-
----
-
-### History Record（浏览记录）
-
-后端在所有接口中返回该结构：
-
-| 字段              | 类型               | 说明              |
-| --------------- | ---------------- | --------------- |
-| id              | integer          | 浏览记录唯一 ID       |
-| user_id         | string           | 所属用户            |
-| restaurant_name | string           | 餐馆名称            |
-| timestamp       | string (ISO8601) | 浏览时间（UTC 或前端传入） |
-
-示例：
-
-```json
-{
-  "id": 12,
-  "user_id": "test001",
+  "id": 1,
+  "user_id": "u001",
   "restaurant_name": "麦当劳",
-  "timestamp": "2025-11-06T13:00:00"
+  "timestamp": "2025-11-06T10:00:00Z"
 }
-```
 
----
-
----
-
-# API 详情
-
----
-
-##  添加浏览记录（Add History）
-
-### **POST /users/{user_id}/history**
-
-### ➤ 功能
-
-为某个用户添加一条浏览历史。
-
-### ➤ 请求参数（Path）
-
-| 参数名     | 类型     | 必填 | 示例          |
-| ------- | ------ | -- | ----------- |
-| user_id | string | 是  | `"test001"` |
-
----
-
-### ➤ 请求体（JSON）
-
-```json
+# 3. API 列表（统一前缀 /api）
+Method	Path	Description
+POST	/api/users/<user_id>/history	新增一个历史记录
+GET	/api/users/<user_id>/history	获取指定用户的所有历史
+DELETE	/api/history/<history_id>	删除某一条历史记录
+# 4. API 详情
+✔ 4.1 创建历史记录
+POST /api/users/<user_id>/history
+请求体：
 {
   "restaurant_name": "麦当劳",
-  "timestamp": "2025-11-06T13:00:00"
+  "timestamp": "2025-11-06T10:00:00Z" 
 }
-```
 
-字段说明：
 
-| 字段              | 必填 | 类型     | 说明                     |
-| --------------- | -- | ------ | ---------------------- |
-| restaurant_name | 是  | string | 餐馆名称                   |
-| timestamp       | 否  | string | ISO8601 时间。不传则后端生成当前时间 |
+timestamp 可不传 → 后端自动生成当前时间。
 
----
-
-### ➤ 响应（201 Created）
-
-```json
+返回示例：
 {
-  "message": "History record added successfully"
-}
-```
-
----
-
----
-
-##  查询用户历史记录（Get History）
-
-### **GET /users/{user_id}/history**
-
-### ➤ 功能
-
-按时间倒序返回用户的所有浏览记录。
-
-### ➤ 请求参数（Path）
-
-| 参数名     | 类型     | 必填 |
-| ------- | ------ | -- |
-| user_id | string | 是  |
-
----
-
-### ➤ 响应（200 OK）
-
-```json
-[
-  {
+  "message": "History record added successfully",
+  "data": {
     "id": 12,
-    "user_id": "test001",
+    "user_id": "u001",
     "restaurant_name": "麦当劳",
-    "timestamp": "2025-11-06T13:00:00"
-  },
-  {
-    "id": 11,
-    "user_id": "test001",
-    "restaurant_name": "肯德基",
-    "timestamp": "2025-10-30T19:22:00"
+    "timestamp": "2025-11-06T10:00:00Z"
   }
-]
-```
+}
 
-说明：
+错误码：
+Code	情况
+400	restaurant_name 缺失
+401	token 无效（由 request.js 控制）
+500	服务器错误
+✔ 4.2 获取用户历史记录
+GET /api/users/<user_id>/history
 
-* 返回列表按 `timestamp` 降序排列（最近在前）
-* 当用户无记录时返回 `[]`
+返回该用户按时间倒序排列的全部历史记录。
 
----
+返回示例：
+{
+  "data": [
+    {
+      "id": 5,
+      "user_id": "u001",
+      "restaurant_name": "海底捞",
+      "timestamp": "2025-11-06T12:00:00Z"
+    },
+    {
+      "id": 3,
+      "user_id": "u001",
+      "restaurant_name": "麦当劳",
+      "timestamp": "2025-11-06T10:00:00Z"
+    }
+  ]
+}
 
----
-
-##  删除历史记录（Delete History）
-
-### **DELETE /history/{history_id}**
-
-### ➤ 功能
-
-根据 ID 删除某条历史记录。
-
-### ➤ 请求参数（Path）
-
-| 参数名        | 类型      | 必填 |
-| ---------- | ------- | -- |
-| history_id | integer | 是  |
-
----
-
-### ➤ 响应（200 OK）
-
-```json
+错误码：
+Code	情况
+200	成功（即使无记录）
+✔ 4.3 删除历史记录
+DELETE /api/history/<history_id>
+返回格式：
 {
   "message": "History record deleted successfully"
 }
-```
 
-### ➤ 错误（404 Not Found）
+错误码：
+Code	情况
+200	删除成功
+404	该 ID 不存在
+401	token 无效
+# 5. Recommend.vue 写入历史的触发机制（关键章节）
 
-```json
-{
-  "error": "Record not found"
+历史记录由前端推荐页自动写入，不由用户手动触发。
+
+触发逻辑：
+
+在 Recommend.vue，当用户点击“随机推荐”后：
+
+results.value = [...]
+showModal.value = true
+
+
+然后 watch：
+
+watch(showModal, async (visible) => {
+  if (visible && results.value.length > 0) {
+    await addHistory({
+      user_id: currentUser.id,
+      restaurant_name: results.value[0].name,
+      timestamp: new Date().toISOString()
+    })
+  }
+})
+
+
+即：
+
+当 showModal 从 false → true 且有推荐结果时，向后端写入历史。
+
+# 6. 前端 API 封装（utils/api/history.js）
+import request from '@/utils/request'
+
+export const addHistory = (userId, name, timestamp) => {
+  return request.post(`/api/users/${userId}/history`, {
+    restaurant_name: name,
+    timestamp
+  })
 }
-```
 
----
-
----
-
-# 示例（Postman）
-
-### POST 添加记录
-
-```
-POST http://localhost:5000/users/test001/history
-Content-Type: application/json
-
-{
-  "restaurant_name": "麦当劳",
-  "timestamp": "2025-11-06T13:00:00"
+export const getHistory = (userId) => {
+  return request.get(`/api/users/${userId}/history`)
 }
-```
 
-### GET 查询记录
+export const deleteHistory = (id) => {
+  return request.delete(`/api/history/${id}`)
+}
 
-```
-GET http://localhost:5000/users/test001/history
-```
+# 7. 权限控制（前端）
 
-### DELETE 删除记录
+History 模块必须在登录状态下使用：
 
-```
-DELETE http://localhost:5000/history/12
-```
+user_id 从 Pinia 的 userStore 获取
 
+request.js 自动在请求头加 token
 
+token 失效 → 自动跳转 login（request.js 内有逻辑）
+
+# 8. 测试覆盖（已通过 pytest）
+
+pytest 覆盖内容：
+
+✔ 创建记录（成功/缺少字段）
+
+✔ timestamp 自动生成
+
+✔ 获取历史（空/多条/排序）
+
+✔ 删除历史（成功/404）
+
+✔ 用户隔离
+
+✔ 全流程：创建 → 查询 → 删除
+
+全部测试通过。
+
+# 9. 后续扩展（未来版本 v2）
+
+未来 History 模块可以扩展：
+
+🔹 记录用户在首页的操作行为
+
+🔹 添加餐馆 ID，支持点击跳转 restaurant detail
+
+🔹 增加批量清空全部历史
+
+🔹 记录用户收藏行为
+
+🔹 增加 GPS 定位、偏好分析
+
+当前版本先保持最小实现。
