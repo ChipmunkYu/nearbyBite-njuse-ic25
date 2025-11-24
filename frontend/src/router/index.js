@@ -28,6 +28,12 @@ const routes = [
     message: route.params.message || '服务器错误'
   })
 },
+
+{
+  path: '/history',
+  component: () => import('@/pages/History.vue'),
+  meta: { requiresAuth: true }
+},
 //...新增路由放在这里之前声明，注意不要放在错误之后！！！
 {
     path: '/:pathMatch(.*)*',

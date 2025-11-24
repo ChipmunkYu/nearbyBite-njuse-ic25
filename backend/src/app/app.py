@@ -37,7 +37,7 @@ def create_app():
     app.register_blueprint(home_bp)
     app.register_blueprint(first_bp)
     app.register_blueprint(recommend_bp)
-    app.register_blueprint(history_bp)  # 注册历史记录蓝图
+    app.register_blueprint(history_bp)  
   
    #数据库初始化
    # （普通功能的路由定义请写在这之前

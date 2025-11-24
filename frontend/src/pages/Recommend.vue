@@ -87,6 +87,8 @@
 
 <script setup>
 import { ref } from "vue";
+import { useUserStore } from '@/stores/user'
+import { addHistory } from '@/utils/api'
 
 const foodTypes = ["快餐", "火锅", "烧烤", "甜品", "奶茶", "小吃", "川菜", "韩餐", "日料", "西餐", "轻食"];
 const flavors = ["清淡", "重口味", "辣", "甜", "咸香", "麻辣", "酸爽", "健康轻食"];
@@ -95,6 +97,7 @@ const selectedFlavors = ref([]);
 const priceRange = ref([0, 200]);
 const results = ref([]);
 const showModal = ref(false);
+const userStore = useUserStore();
 
 const restaurants = [
   { name: "麦当劳", location: "广州路", price: 30, types: ["快餐"], flavors: ["咸香"] },
@@ -120,6 +123,27 @@ const getRecommendations = () => {
   }
   showModal.value = true;
 };
+
+watch(showModal, async (visible) => {
+  // 只有在 showModal 从 false → true 时才写入历史
+  if (visible === true && results.value.length > 0) {
+    const restaurantName = results.value[0].name
+    const userId = userStore.user?.id   // 确保已登录
+
+    if (!userId) {
+      console.warn("未登录，不记录历史记录")
+      return
+    }
+
+    try {
+      await addHistory(userId, restaurantName)
+      console.log("历史记录已写入：", restaurantName)
+    } catch (err) {
+      console.error("写入历史失败：", err)
+    }
+  }
+});
+
 </script>
 
 <style scoped>
