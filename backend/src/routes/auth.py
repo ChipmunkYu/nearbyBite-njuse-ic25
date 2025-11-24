@@ -1,3 +1,4 @@
+# backend/src/routes/auth.py
 from flask import Blueprint, request, jsonify
 from src.extensions import db
 from src.models.user import User, generate_account_number

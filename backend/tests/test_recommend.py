@@ -22,3 +22,7 @@ def test_recommend_basic(client):
         assert isinstance(item["name"], str)
         assert isinstance(item["location"], str)
         assert isinstance(item["tags"], list)  
+
+
+# 因为router里面还是很基础的版本，所以没有测试推荐是否正确
+# TODO：完善推荐算法后，补充推荐正确性的测试

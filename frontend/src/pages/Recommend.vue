@@ -294,6 +294,27 @@ const getRecommendations = async () => {
     showModal.value = true;
   }
 };
+
+watch(showModal, async (visible) => {
+  // 只有在 showModal 从 false → true 时才写入历史
+  if (visible === true && results.value.length > 0) {
+    const restaurantName = results.value[0].name
+    const userId = userStore.user?.id   // 确保已登录
+
+    if (!userId) {
+      console.warn("未登录，不记录历史记录")
+      return
+    }
+
+    try {
+      await addHistory(userId, restaurantName)
+      console.log("历史记录已写入：", restaurantName)
+    } catch (err) {
+      console.error("写入历史失败：", err)
+    }
+  }
+});
+
 </script>
 
 <style scoped>

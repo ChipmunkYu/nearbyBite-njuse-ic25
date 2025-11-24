@@ -39,13 +39,13 @@ def create_history(user_id):
 @history_bp.route('/api/users/<user_id>/history', methods=['GET'])
 def get_history(user_id):
     records = History.query.filter_by(user_id=user_id).order_by(History.timestamp.desc()).all()
-    return jsonify([r.to_dict() for r in records]), 200
+    return jsonify({"data": [r.to_dict() for r in records]}), 200
 
 
 
 #  3) 删除历史记录
 
-@history_bp.route('/history/<int:history_id>', methods=['DELETE'])
+@history_bp.route('/api/history/<history_id>', methods=['DELETE'])
 def delete_history(history_id):
     #record = History.query.get(history_id)
     record = db.session.get(History, history_id)
