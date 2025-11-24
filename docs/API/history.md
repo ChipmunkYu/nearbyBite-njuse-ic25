@@ -25,39 +25,47 @@ History（浏览历史）模块用于记录用户在 “随机推荐页（Recomm
 推荐偏好挖掘（未来扩展）
 
 # 2. 数据结构（History Record）
-字段名	类型	说明
-id	int	主键
-user_id	string / int	浏览的用户 ID
-restaurant_name	string	推荐的餐馆名
-timestamp	string (ISO8601)	浏览时间，如：2025-11-06T10:00:00Z
+| 字段名           | 类型            | 说明                                |
+|------------------|-----------------|-------------------------------------|
+| id               | int             | 主键                                 |
+| user_id          | string / int    | 浏览的用户 ID                        |
+| restaurant_name  | string          | 推荐的餐馆名                         |
+| timestamp        | string (ISO8601) | 浏览时间，如：2025-11-06T10:00:00Z   |
 
 返回 JSON 中包含 fields：
-
+```js
 {
   "id": 1,
   "user_id": "u001",
   "restaurant_name": "麦当劳",
   "timestamp": "2025-11-06T10:00:00Z"
 }
+```
 
 # 3. API 列表（统一前缀 /api）
-Method	Path	Description
-POST	/api/users/<user_id>/history	新增一个历史记录
-GET	/api/users/<user_id>/history	获取指定用户的所有历史
-DELETE	/api/history/<history_id>	删除某一条历史记录
+| Method | Path                             | Description              |
+|--------|----------------------------------|--------------------------|
+| POST   | /api/users/<user_id>/history     | 新增一条历史记录         |
+| GET    | /api/users/<user_id>/history     | 获取指定用户的所有历史   |
+| DELETE | /api/history/<history_id>        | 删除某一条历史记录       |
+
 # 4. API 详情
-✔ 4.1 创建历史记录
+## 4.1 创建历史记录
+```js
 POST /api/users/<user_id>/history
+```
 请求体：
+```js
 {
   "restaurant_name": "麦当劳",
   "timestamp": "2025-11-06T10:00:00Z" 
 }
-
+```
 
 timestamp 可不传 → 后端自动生成当前时间。
 
 返回示例：
+```js
 {
   "message": "History record added successfully",
   "data": {
@@ -67,18 +75,23 @@ timestamp 可不传 → 后端自动生成当前时间。
     "timestamp": "2025-11-06T10:00:00Z"
   }
 }
-
+```
 错误码：
-Code	情况
-400	restaurant_name 缺失
-401	token 无效（由 request.js 控制）
-500	服务器错误
-✔ 4.2 获取用户历史记录
+| Code | 情况                               |
+|------|------------------------------------|
+| 400  | `restaurant_name` 缺失             |
+| 401  | token 无效（由 request.js 控制）   |
+| 500  | 服务器错误                         |
+
+## 4.2 获取用户历史记录
+```js
 GET /api/users/<user_id>/history
+```
 
 返回该用户按时间倒序排列的全部历史记录。
 
 返回示例：
+```js
 {
   "data": [
     {
@@ -95,22 +108,29 @@ GET /api/users/<user_id>/history
     }
   ]
 }
-
+```
 错误码：
-Code	情况
-200	成功（即使无记录）
-✔ 4.3 删除历史记录
+| Code | 情况                 |
+|------|----------------------|
+| 200  | 成功（即使无记录）   |
+
+## 4.3 删除历史记录
+```js
 DELETE /api/history/<history_id>
+```
 返回格式：
+```js
 {
   "message": "History record deleted successfully"
 }
-
+```
 错误码：
-Code	情况
-200	删除成功
-404	该 ID 不存在
-401	token 无效
+| Code | 情况           |
+|------|----------------|
+| 200  | 删除成功       |
+| 404  | 该 ID 不存在   |
+| 401  | token 无效     |
+
 # 5. Recommend.vue 写入历史的触发机制（关键章节）
 
 历史记录由前端推荐页自动写入，不由用户手动触发。
@@ -119,12 +139,14 @@ Code	情况
 
 在 Recommend.vue，当用户点击“随机推荐”后：
 
+```js
 results.value = [...]
 showModal.value = true
-
+```
 
 然后 watch：
 
+```js
 watch(showModal, async (visible) => {
   if (visible && results.value.length > 0) {
     await addHistory({
@@ -134,13 +156,14 @@ watch(showModal, async (visible) => {
     })
   }
 })
-
+```
 
 即：
 
 当 showModal 从 false → true 且有推荐结果时，向后端写入历史。
 
 # 6. 前端 API 封装（utils/api/history.js）
+```js
 import request from '@/utils/request'
 
 export const addHistory = (userId, name, timestamp) => {
@@ -157,6 +180,7 @@ export const getHistory = (userId) => {
 export const deleteHistory = (id) => {
   return request.delete(`/api/history/${id}`)
 }
+```
 
 # 7. 权限控制（前端）
 
