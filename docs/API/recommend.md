@@ -81,6 +81,7 @@ Recommend（随机推荐）模块用于在 “吃什么 · 随机推荐页（Rec
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/recommend/restaurants` | 获取一条随机推荐餐馆记录（Recommend 模块） |
+
 当前版本 Recommend 模块只有一个核心接口，其他行为（如写入历史）由 History 模块负责。
 
 # 4. API 详情
