@@ -1,4 +1,4 @@
-<!-- 随机推荐页面 -->
+<!-- 随机推荐页面（支持自动定位 + 距离筛选） -->
 <template>
   <div class="recommend-container">
     <div class="background">
@@ -11,7 +11,13 @@
     <div class="recommend-card">
       <h1>🍽️ 吃什么 · 推荐页</h1>
 
+      <!-- 定位状态提示 -->
+      <p class="location-status">
+         {{ locationStatus }}
+      </p>
+
       <div class="filter-bar">
+        <!-- 人均消费 -->
         <div class="filter-group">
           <span class="label-text">人均消费：</span>
           <div class="slider-box">
@@ -23,10 +29,13 @@
               :step="1"
               show-tooltip
             />
-            <div class="price-display">{{ priceRange[0] }} 元 - {{ priceRange[1] }} 元</div>
+            <div class="price-display">
+              {{ priceRange[0] }} 元 - {{ priceRange[1] }} 元
+            </div>
           </div>
         </div>
 
+        <!-- 食物类型 -->
         <div class="filter-group">
           <span class="label-text">食物类型：</span>
           <el-select
@@ -37,10 +46,16 @@
             placeholder="搜索或选择类型"
             style="min-width: 300px;"
           >
-            <el-option v-for="tag in foodTypes" :key="tag" :label="tag" :value="tag" />
+            <el-option
+              v-for="tag in foodTypes"
+              :key="tag"
+              :label="tag"
+              :value="tag"
+            />
           </el-select>
         </div>
 
+        <!-- 口味风格 -->
         <div class="filter-group">
           <span class="label-text">口味风格：</span>
           <el-select
@@ -51,13 +66,77 @@
             placeholder="选择口味"
             style="min-width: 300px;"
           >
-            <el-option v-for="f in flavors" :key="f" :label="f" :value="f" />
+            <el-option
+              v-for="f in flavors"
+              :key="f"
+              :label="f"
+              :value="f"
+            />
           </el-select>
+        </div>
+
+        <!-- 评分下限 -->
+        <div class="filter-group">
+          <span class="label-text">评分下限：</span>
+          <el-select
+            v-model="minRating"
+            clearable
+            placeholder="不限"
+            style="min-width: 200px;"
+          >
+            <el-option
+              v-for="opt in ratingOptions"
+              :key="opt.label"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </el-select>
+        </div>
+
+        <!-- 地区 -->
+        <div class="filter-group">
+          <span class="label-text">地区：</span>
+          <el-select
+            v-model="selectedArea"
+            clearable
+            placeholder="选择地区"
+            style="min-width: 200px;"
+          >
+            <el-option
+              v-for="area in areas"
+              :key="area"
+              :label="area"
+              :value="area"
+            />
+          </el-select>
+        </div>
+
+        <!-- 最大距离（km） -->
+        <div class="filter-group">
+          <span class="label-text">最大距离：</span>
+          <div class="slider-box">
+            <el-slider
+              v-model="maxDistance"
+              :min="0"
+              :max="10"
+              :step="0.5"
+              show-tooltip
+            />
+            <div class="price-display">
+              <span v-if="maxDistance === 0">不限距离</span>
+              <span v-else>不超过 {{ maxDistance }} km</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="button-bar">
-        <el-button class="big-btn" type="primary" @click="getRecommendations">
+        <el-button
+          class="big-btn"
+          type="primary"
+          @click="getRecommendations"
+          :loading="loading"
+        >
           🎲 随机推荐
         </el-button>
       </div>
@@ -67,18 +146,29 @@
     <transition name="fade">
       <div v-if="showModal" class="overlay">
         <div class="modal-card">
-          <h2>这顿去这里吃 🍜</h2>
           <div v-if="results.length">
+            <h2>这顿去这里吃</h2>
             <h3>{{ results[0].name }}</h3>
             <p>📍 地址：{{ results[0].location }}</p>
+            <p>📌 地区：{{ results[0].area || "未知" }}</p>
             <p>💰 人均：{{ results[0].price }} 元</p>
-            <p>🏷️ 类型：{{ results[0].types.join(' / ') }}</p>
-            <p>🍴 风格：{{ results[0].flavors.join(' / ') }}</p>
+            <p>⭐ 评分：{{ results[0].rating ?? "暂无评分" }}</p>
+            <p v-if="results[0].distance_km !== undefined">
+              🚶 距离：{{ results[0].distance_km }} km
+            </p>
+            <p v-if="results[0].types && results[0].types.length">
+              🏷️ 类型：{{ results[0].types.join(" / ") }}
+            </p>
+            <p v-if="results[0].flavors && results[0].flavors.length">
+              🍴 风格：{{ results[0].flavors.join(" / ") }}
+            </p>
           </div>
           <div v-else>
             <p>🙈 暂无符合条件的推荐，请调整筛选条件再试一次～</p>
           </div>
-          <el-button type="primary" class="close-btn" @click="showModal = false">返回筛选</el-button>
+          <el-button type="primary" class="close-btn" @click="showModal = false">
+            返回筛选
+          </el-button>
         </div>
       </div>
     </transition>
@@ -86,39 +176,123 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from "axios";
 
-const foodTypes = ["快餐", "火锅", "烧烤", "甜品", "奶茶", "小吃", "川菜", "韩餐", "日料", "西餐", "轻食"];
-const flavors = ["清淡", "重口味", "辣", "甜", "咸香", "麻辣", "酸爽", "健康轻食"];
+const foodTypes = [
+  "快餐",
+  "火锅",
+  "烧烤",
+  "甜品",
+  "奶茶",
+  "小吃",
+  "川菜",
+  "韩餐",
+  "日料",
+  "西餐",
+  "轻食",
+];
+const flavors = [
+  "清淡",
+  "重口味",
+  "辣",
+  "甜",
+  "咸香",
+  "麻辣",
+  "酸爽",
+  "健康轻食",
+];
+
+const ratingOptions = [
+  { label: "不限", value: null },
+  { label: "⭐ 4.0 以上", value: 4.0 },
+  { label: "⭐ 4.3 以上", value: 4.3 },
+  { label: "⭐ 4.5 以上", value: 4.5 },
+  { label: "⭐ 4.8 以上", value: 4.8 },
+];
+
+const areas = ["鼓楼", "仙林", "新街口"];
+
 const selectedTypes = ref([]);
 const selectedFlavors = ref([]);
 const priceRange = ref([0, 200]);
+const minRating = ref(null);
+const selectedArea = ref("");
+const maxDistance = ref(0); // 0 表示不限
 const results = ref([]);
 const showModal = ref(false);
+const loading = ref(false);
 
-const restaurants = [
-  { name: "麦当劳", location: "广州路", price: 30, types: ["快餐"], flavors: ["咸香"] },
-  { name: "海底捞", location: "大学城", price: 90, types: ["火锅"], flavors: ["辣"] },
-  { name: "烤匠", location: "仙林中心", price: 60, types: ["烧烤"], flavors: ["重口味", "麻辣"] },
-  { name: "兰州拉面", location: "汉口路", price: 25, types: ["小吃"], flavors: ["咸香"] },
-  { name: "胖哥俩肉蟹煲", location: "新街口", price: 75, types: ["川菜"], flavors: ["麻辣"] },
-];
+// 定位相关
+const userLat = ref(null);
+const userLng = ref(null);
+const locationStatus = ref("正在尝试获取当前位置…");
 
-const getRecommendations = () => {
-  let filtered = restaurants;
-  if (selectedTypes.value.length)
-    filtered = filtered.filter(r => selectedTypes.value.some(t => r.types.includes(t)));
-  if (selectedFlavors.value.length)
-    filtered = filtered.filter(r => selectedFlavors.value.some(f => r.flavors.includes(f)));
-  filtered = filtered.filter(r => r.price >= priceRange.value[0] && r.price <= priceRange.value[1]);
-
-  if (!filtered.length) {
-    results.value = [];
-  } else {
-    const randomIndex = Math.floor(Math.random() * filtered.length);
-    results.value = [filtered[randomIndex]];
+onMounted(() => {
+  if (!navigator.geolocation) {
+    locationStatus.value = "当前浏览器不支持定位，将按默认位置推荐。";
+    return;
   }
-  showModal.value = true;
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      userLat.value = pos.coords.latitude;
+      userLng.value = pos.coords.longitude;
+      locationStatus.value = "已获取当前位置，将优先推荐附近餐厅。";
+    },
+    () => {
+      locationStatus.value = "无法获取定位，将按默认位置推荐。";
+    }
+  );
+});
+
+const getRecommendations = async () => {
+  loading.value = true;
+  try {
+    const [minPrice, maxPrice] = priceRange.value;
+
+    const params = {
+      price_min: minPrice,
+      price_max: maxPrice,
+      types: selectedTypes.value.join(","),
+      flavors: selectedFlavors.value.join(","),
+      area: selectedArea.value || "",
+    };
+
+    // 评分下限
+    if (minRating.value !== null) {
+      params.min_rating = minRating.value;
+    }
+
+    // 距离限制（0 表示不限，就不传）
+    if (maxDistance.value > 0) {
+      params.max_distance_km = maxDistance.value;
+    }
+
+    // 有定位的话传给后端
+    if (userLat.value != null && userLng.value != null) {
+      params.lat = userLat.value;
+      params.lng = userLng.value;
+    }
+
+    const resp = await axios.get(
+      "http://127.0.0.1:5000/api/recommend/restaurants",
+      { params }
+    );
+
+    const data = resp.data;
+    if (data && Array.isArray(data.data) && data.data.length > 0) {
+      results.value = data.data;
+    } else {
+      results.value = [];
+    }
+  } catch (err) {
+    console.error("获取推荐失败:", err);
+    results.value = [];
+  } finally {
+    loading.value = false;
+    showModal.value = true;
+  }
 };
 </script>
 
@@ -137,25 +311,54 @@ const getRecommendations = () => {
 }
 
 @keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
-.background { position: absolute; inset: 0; }
+.background {
+  position: absolute;
+  inset: 0;
+}
 .floating-food {
   position: absolute;
   font-size: 36px;
   opacity: 0.25;
   animation: float 6s ease-in-out infinite;
 }
-.floating-food:nth-child(1) { top: 8%; left: 12%; animation-delay: 0s; }
-.floating-food:nth-child(2) { top: 18%; right: 15%; animation-delay: 1.8s; }
-.floating-food:nth-child(3) { bottom: 25%; left: 20%; animation-delay: 3.2s; }
-.floating-food:nth-child(4) { bottom: 10%; right: 8%; animation-delay: 4.6s; }
+.floating-food:nth-child(1) {
+  top: 8%;
+  left: 12%;
+  animation-delay: 0s;
+}
+.floating-food:nth-child(2) {
+  top: 18%;
+  right: 15%;
+  animation-delay: 1.8s;
+}
+.floating-food:nth-child(3) {
+  bottom: 25%;
+  left: 20%;
+  animation-delay: 3.2s;
+}
+.floating-food:nth-child(4) {
+  bottom: 10%;
+  right: 8%;
+  animation-delay: 4.6s;
+}
 
 @keyframes float {
-  0%,100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(10deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+  }
 }
 
 .recommend-card {
@@ -172,9 +375,15 @@ const getRecommendations = () => {
 
 h1 {
   color: #ff6b6b;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-size: 36px;
   font-weight: 700;
+}
+
+.location-status {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
 }
 
 .filter-bar {
@@ -255,8 +464,14 @@ h1 {
   animation: popIn 0.4s ease;
 }
 @keyframes popIn {
-  0% { transform: scale(0.7); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 .close-btn {
   margin-top: 20px;

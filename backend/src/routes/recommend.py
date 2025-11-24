@@ -1,29 +1,46 @@
-#这里是推荐餐厅的接口，占一个大致的位，做recommend的同学根据情况进行修改
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+import random
 
-#访问路径：http://127.0.0.1:5000/api/recommend/restaurants
-
+from src.utils.recommend_query import build_restaurant_query
+from src.models.restaurant import Restaurant
 
 recommend_bp = Blueprint("recommend", __name__, url_prefix="/api/recommend")
 
+
 @recommend_bp.route("/restaurants", methods=["GET"])
-
-#表示需要身份验证才能访问此路由，根据具体实际情况决定是否需要添加,这里相关的同学可以不用管，只用写业务逻辑就行（可以直接删除）
-#@jwt_required()
-
 def recommend():
-        # 如果用了 @jwt_required() 最好使用这个
-        #user_id = get_jwt_identity() 
-        return jsonify([
-        {
-            "name": "麦当劳",
-            "location": "中山路",
-            "tags": ["快餐", "人均30"]
-        },
-        {
-            "name": "肯德基",
-            "location": "南大门口",
-            "tags": ["鸡肉", "人均35"]
-        }
-    ])
+
+    # 读取参数
+    filters = {
+        "price_min": request.args.get("price_min", 0, type=float),
+        "price_max": request.args.get("price_max", 9999, type=float),
+        "min_rating": request.args.get("min_rating", None, type=float),
+        "area": request.args.get("area", "", type=str),
+        "types": [t for t in request.args.get("types", "").split(",") if t],
+        "flavors": [f for f in request.args.get("flavors", "").split(",") if f],
+    }
+
+    # 构建查询
+    query = build_restaurant_query(filters)
+
+    # 限制候选数量
+    candidates = query.limit(100).all()
+
+    # 无结果
+    if not candidates:
+        return jsonify({
+            "code": 200,
+            "message": "no match",
+            "count": 0,
+            "data": []
+        }), 200
+
+    # 随机抽一条
+    chosen = random.choice(candidates)
+
+    return jsonify({
+        "code": 200,
+        "message": "success",
+        "count": 1,
+        "data": [chosen.to_dict()]
+    }), 200
