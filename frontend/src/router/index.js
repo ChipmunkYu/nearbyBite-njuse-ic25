@@ -7,7 +7,7 @@ import Home from '../pages/Home.vue'
 import First from '../pages/first.vue'
 import Error from '../pages/Error.vue'
 import Recommend from '../pages/Recommend.vue' 
-
+import History from '../pages/History.vue'
 
 //声明一些基础路由，后续增加页面从此处添加
 //需要登录的路由在meta中添加requiresAuth: true
@@ -31,7 +31,7 @@ const routes = [
 
 {
   path: '/history',
-  component: () => import('@/pages/History.vue'),
+  component: History,
   meta: { requiresAuth: true }
 },
 //...新增路由放在这里之前声明，注意不要放在错误之后！！！
