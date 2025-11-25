@@ -19,6 +19,7 @@
 - app.py - Flask 应用主入口
 - app.db - SQLite 数据库文件
 - '__init__.py' - 包初始化
+- instance/mock_data.py 用于生成临时伪数据（只在开发阶段使用，模拟推荐页筛选功能）
 
 #### models
 存放数据模型，定义数据库表结构和业务实体
@@ -48,7 +49,7 @@
 - test_debug_path.py 
 - test_recommend.py 
 - test_sample.py 
--test_history.py
+- test_history.py
 ### requirements.txt
 
 Python 依赖包列表
