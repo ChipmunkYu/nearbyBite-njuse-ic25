@@ -39,23 +39,23 @@
             <div class="nav-icon">📚</div>
             <span>历史记录</span>
           </div>
-          <div class="nav-item" @click="goToFavorites">
+    <!--      <div class="nav-item" @click="goToFavorites">
             <div class="nav-icon">❤️</div>
             <span>我的收藏</span>
           </div>
-        </nav>
-
+  -->     </nav>
+    
         <!--做一个展示一周的简易数据统计， 
         这里暂时做一个假数据，后期有余力再做完善-->
 
-        <div class="quick-stats-side">
+     <div class="quick-stats-side">
           <h3>本周数据</h3>
           <div class="stat-side">
             <div class="stat-side-item">
               <span class="stat-side-label">推荐次数</span>
               <span class="stat-side-value">5</span>
             </div>
-            <div class="stat-side-item">
+ <!--           <div class="stat-side-item">
               <span class="stat-side-label">尝试新菜</span>
               <span class="stat-side-value">3</span>
             </div>
@@ -63,10 +63,10 @@
               <span class="stat-side-label">收藏</span>
               <span class="stat-side-value">2</span>
             </div>
-          </div>
+    -->     </div>
         </div>
-      </aside>
-
+    </aside>
+  
       <!-- 主内容区 -->
       <main class="main-content">
         <!-- 欢迎区域 -->
@@ -122,18 +122,18 @@
             </div>
           </div>
 
-          <div class="feature-card" @click="goToFavorites">
+ <!--         <div class="feature-card" @click="goToFavorites">
             <div class="card-header">
               <div class="card-icon">❤️</div>
               <h4>我的收藏</h4>
             </div>
-            <p>管理您喜欢的美食和餐厅收藏</p>
+           <p>管理您喜欢的美食和餐厅收藏</p>
             <div class="card-meta">
               <span class="meta-item">15个收藏</span>
               <span class="meta-item">3个分类</span>
             </div>
           </div>
-
+-->
           <div class="feature-card" @click="goToSettings">
             <div class="card-header">
               <div class="card-icon">⚙️</div>
@@ -147,8 +147,8 @@
           </div>
         </div>
 
-        <!-- 今日推荐 
-         这里也是假数据-->
+   <!--     今日推荐 
+         这里也是假数据
         <div class="today-section">
           <div class="section-header">
             <h2>今日热门推荐</h2>
@@ -178,7 +178,7 @@
             </div>
           </div>
         </div>
-      </main>
+  -->  </main>
 
       <!-- 右侧边栏 -->
       <aside class="right-sidebar">
@@ -189,7 +189,7 @@
               <div class="stat-number">{{ stats.recommendCount }}</div>
               <div class="stat-label">总推荐次数</div>
             </div>
-            <div class="stat-item-large">
+<!--        <div class="stat-item-large">
               <div class="stat-number">{{ stats.favoriteCount }}</div>
               <div class="stat-label">收藏美食</div>
             </div>
@@ -197,7 +197,7 @@
               <div class="stat-number">{{ stats.daysUsed }}</div>
               <div class="stat-label">使用天数</div>
             </div>
-          </div>
+-->         </div>
         </div>
 
         <div class="daily-tip-card">
@@ -235,6 +235,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { InfoFilled } from '@element-plus/icons-vue'
 import request from '@/utils/api/request'
 
+
 const router = useRouter()
 const userStore = useUserStore()
 
@@ -269,7 +270,7 @@ const timeGreeting = computed(() => {
 // 各种跳转函数，这里对应具体的网址，后续记得根据实际路由调整！！！
 const goToRecommend = () => router.push('/recommend')
 const goToRestaurants = () => ElMessage.info('所有餐馆功能开发中...')
-const goToHistory = () => ElMessage.info('历史记录功能开发中...')
+const goToHistory = () => router.push('/history')
 const goToFavorites = () => ElMessage.info('收藏功能开发中...')
 const goToSettings = () => ElMessage.info('设置功能开发中...')
 const goToHelp = () => ElMessage.info('帮助文档开发中...')
