@@ -123,11 +123,11 @@ const painPoints = [
     title: '时间白白浪费',
     description: '每天花在决定吃什么上的时间累积起来很惊人'
   },
-  {
+ /* {
     emoji: '😵',
     title: '决策疲劳',
     description: '工作已经够累了，不想再为吃饭做决定'
-  }
+  }*/
 ]
 
 // 功能特性
@@ -149,13 +149,13 @@ const features = [
     icon: '⭐',
     title: '个性化推荐',
     description: '基于您的口味偏好，推荐更合适的美食'
-  },
-  {
+  }
+  /*{
     step: '04',
     icon: '❤️',
     title: '收藏管理',
     description: '标记喜欢的餐厅，建立个人美食地图'
-  }
+  }*/
 ]
 
 // 获取浮动文字样式
