@@ -1,5 +1,5 @@
 # src/routes/restaurants.py
-
+#待加jwt验证
 from flask import Blueprint, request, jsonify
 from src.extensions import db
 from src.models.restaurant import Restaurant
