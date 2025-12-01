@@ -9,9 +9,34 @@ Usage:
 from src.app.app import create_app
 from src.extensions import db
 from src.models.restaurant import Restaurant
+from src.models.user import User
+from src.models.history import History
+from datetime import datetime, timezone
+def utc_now():
+    return datetime.now(timezone.utc)
 
-from datetime import datetime
-
+def seed_users():
+    """生成示例用户数据"""
+    users_data = [
+        {"username": "Alice", "user_id": "U001"},
+        {"username": "Bob", "user_id": "U002"}, 
+        {"username": "Cathy", "user_id": "U003"},
+        {"username": "David", "user_id": "U004"},
+        {"username": "Eva", "user_id": "U005"},
+        {"username": "KK", "user_id": "U006"} 
+    ]
+    
+    for user_data in users_data:
+        user = User(
+            username=user_data["username"],
+            user_id=user_data["user_id"]
+        )
+        user.set_password("123456")  # 统一密码
+        db.session.add(user)
+    
+    db.session.commit()
+    print(f"插入 {len(users_data)} 条用户数据成功！")
+    return User.query.all()
 
 def seed_restaurants():
     """Insert sample restaurant data (20–30 entries)."""
@@ -58,7 +83,7 @@ def seed_restaurants():
     # 自动补齐 created_at 等字段
     for item in sample_data:
         item["source"] = "manual"
-        item["last_crawled_time"] = datetime.utcnow()
+        item["last_crawled_time"] = utc_now()
 
     for item in sample_data:
         r = Restaurant(**item)
@@ -78,6 +103,10 @@ def run():
         print("创建数据库表...")
         db.create_all()
 
+        
+        print("写入示例用户数据...")
+        users = seed_users()
+        
         print("写入示例餐馆数据...")
         seed_restaurants()
 
