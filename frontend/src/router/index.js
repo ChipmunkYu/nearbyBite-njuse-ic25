@@ -7,8 +7,10 @@ import Home from '../pages/Home.vue'
 import First from '../pages/first.vue'
 import Error from '../pages/Error.vue'
 import Recommend from '../pages/Recommend.vue' 
-
-
+import Restaurant from '../pages/Restaurant.vue'    
+import Feedback from '../pages/Feedback.vue'
+import Settings from '../pages/Settings.vue'
+import Userstats from '../pages/Userstats.vue'
 //声明一些基础路由，后续增加页面从此处添加
 //需要登录的路由在meta中添加requiresAuth: true
 
@@ -18,6 +20,11 @@ const routes = [
 {path: '/register', component: Register},
 {path: '/first', component: First, meta: { requiresAuth: true } },
 {path: '/recommend', component: Recommend, meta: { requiresAuth: true } },
+{path: '/restaurant',component: Restaurant, meta: { requiresAuth: true } },
+{path: '/feedback', component: Feedback, meta: { requiresAuth: true } },
+{path: '/settings', component: Settings, meta: { requiresAuth: true } },
+{path: '/help', component: () => import('@/pages/Help.vue')},
+{path: '/userstats', component: Userstats, meta: { requiresAuth: true } },
 
 {
   path: '/error/:code',
