@@ -2,8 +2,9 @@
 import request from './request.js'
 
 // 创建历史记录
-export const addHistory = (userId, restaurantName) => {
-  return request.post(`/api/users/${userId}/history`, {
+export const addHistory = (userId, restaurantName, restaurantId) => {
+  return request.post(`/api/users/me/history`, {
+    restaurant_id: restaurantId,
     restaurant_name: restaurantName,
     timestamp: new Date().toISOString(),
   })
@@ -11,10 +12,10 @@ export const addHistory = (userId, restaurantName) => {
 
 // 获取用户历史记录
 export const getHistory = (userId) => {
-  return request.get(`/api/users/${userId}/history`)
+  return request.get(`/api/users/me/history`)
 }
 
 // 删除一条历史记录
 export const deleteHistory = (recordId) => {
-  return request.delete(`/history/${recordId}`)
+  return request.delete(`/api/users/me/history/${recordId}`)
 }
