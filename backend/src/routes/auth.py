@@ -2,8 +2,9 @@
 from flask import Blueprint, request, jsonify
 from src.extensions import db
 from src.models.user import User, generate_account_number
-from flask_jwt_extended import create_access_token,  create_refresh_token
+from flask_jwt_extended import create_access_token,  create_refresh_token, jwt_required, get_jwt_identity
 from datetime import timedelta
+import traceback
 #注册：POST http://127.0.0.1:5000/api/auth/register
 
 #登录：POST http://127.0.0.1:5000/api/auth/login
@@ -18,7 +19,7 @@ def make_unique_user_id(k = 8):
             return candidate
     
     import time 
-    return f"{User.generate_user_id(k - 3)}{int(time.time()) % 10000}"  
+    return f"{generate_account_number(k - 3)}{int(time.time()) % 10000}"  
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
