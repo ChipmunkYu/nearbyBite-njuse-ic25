@@ -1,5 +1,4 @@
-# src/routes/restaurants.py
-
+#backend/src/routes/restaurants.py
 from flask import Blueprint, request, jsonify
 from src.extensions import db
 from src.models.restaurant import Restaurant

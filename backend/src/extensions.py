@@ -1,3 +1,4 @@
+#backend/src/extensions.py
 # 初始Flack扩展实例
 
 from flask_sqlalchemy import SQLAlchemy

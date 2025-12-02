@@ -11,6 +11,7 @@ from src.routes.history import history_bp  # 新增
 from src.routes.recommend import recommend_bp
 from src.routes.restaurants import restaurants_bp
 from src.routes.stats import stats_bp
+from src.scheduler import start_scheduler
 
 # 模型：新增 History 表（用于历史记录）
 from src.models.history import History  # 加入历史模型（不写也能建表，但最好显式 import 让 IDE 检查语法）
@@ -46,6 +47,8 @@ def create_app(testing=False):
     app.register_blueprint(history_bp)
     app.register_blueprint(restaurants_bp)
     app.register_blueprint(stats_bp)
+    
+    start_scheduler(app)
 
     return app
 
