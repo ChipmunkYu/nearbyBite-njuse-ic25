@@ -121,7 +121,7 @@
         <div class="empty-icon">📖</div>
         <h3 class="empty-title">暂无浏览历史</h3>
         <p class="empty-desc">开始使用随机推荐功能，系统将自动记录您的浏览足迹</p>
-        <el-button type="primary" class="empty-btn">
+        <el-button type="primary" class="empty-btn" @click="router.push('/recommend')">
           <span class="btn-icon">🎲</span>
           <span class="btn-text">去随机推荐</span>
         </el-button>
@@ -157,7 +157,8 @@ import { getHistory, deleteHistory } from '@/utils/api'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const userStore = useUserStore()
 const userId = userStore.user?.id
 
