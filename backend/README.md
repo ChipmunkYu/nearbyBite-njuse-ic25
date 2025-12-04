@@ -12,12 +12,16 @@
 - test_config.py - 测试配置文件
 
 
+### **crawler/**
+爬虫与自动任务调度  
+- `crawler_simple.py`：解析高德 POI 数据并写入数据库  
+- `sheduler.py`：APScheduler 定时任务，自动刷新餐馆数据  
+
 ### src 目录
 
 #### app
 
 - app.py - Flask 应用主入口
-- app.db - SQLite 数据库文件
 - '__init__.py' - 包初始化
 
 #### models
@@ -26,19 +30,27 @@
 - user.py - 用户模型定义(User表)
 - '__init__.py' - 包初始化
 - history.py - 历史记录模型
+- `restaurant.py` — 餐馆 Restaurant 表  
 
 #### routes
-存放路由处理函数
-放在这里让app.py干净一点
+各类业务接口  
 
 - auth.py - 用户注册、登录接口（/auth/register, /auth/login）
 - history.py - 历史记录接口：查询/删除记录
+- `users.py` — 用户信息  
+- `restaurants.py` — 餐馆增删改查  
+- `recommend.py` — 推荐系统接口（随机+智能）
+- `stats.py` — 饮食行为统计  
+- `home.py` 
+- `first.py`
 
 #### utils
 存放工具函数和辅助类，业务逻辑无关的通用功能
+- `recommend_query.py` — 推荐算法相关计算  
+
 
 #### extensions.py
-扩展配置
+注册 Flask 扩展，如数据库、JWT 等。
 
 
 ### test目录
@@ -48,10 +60,10 @@
 - test_debug_path.py 
 - test_recommend.py 
 - test_sample.py 
--test_history.py
-### requirements.txt
+- test_history.py
 
-Python 依赖包列表
+### requirements.txt  
+Python 依赖列表  
 
 ### pytest.ini
  

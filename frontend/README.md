@@ -9,6 +9,7 @@
 
 #### assets
 存放需要使用的图片、样式、字体等文件
+vue.svg
 
 #### components
 存放可复用的 Vue 组件
@@ -24,6 +25,10 @@
 - Login.vue - 登录页面
 - Register.vue - 注册页面
 - Recommend.vue - 推荐页面
+- Userstats.vue - 饮食统计图表页面
+- Settings.vue  - 用户设置页面
+- Restaurant.vue - 餐馆管理页面（含增删改查）
+- History.vue - 浏览历史页面
 
 #### router
 定义路由映射、配置路由行为、管理导航
@@ -36,6 +41,15 @@
 
 #### utils
 放置工具函数、辅助方法
+
+errorPage.js          # 错误处理跳转
+loading.js            # 全局 Loading 效果
+
+### api
+- auth.js          # 登录 / 注册 API
+- history.js       # 浏览历史 API
+- index.js         # API 管理入口
+- request.js       # 封装 axios 请求，自动注入 token、处理刷新
 
 ### api  封装 Axios 工具
 - auth.js -  登录 / 注册 / token
