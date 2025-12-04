@@ -44,6 +44,8 @@
       </div>
     </el-card>
 
+
+    
     <!-- 数据卡片 -->
     <el-card class="data-card" shadow="never">
       <template #header>
@@ -63,7 +65,7 @@
 
       <!-- 餐馆表格 -->
       <el-table 
-        :data="filteredRestaurants" 
+        :data="paginatedRestaurants" 
         stripe 
         v-loading="loading"
         class="restaurant-table"
@@ -148,7 +150,22 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 分页器 -->
+<div class="pagination-wrapper">
+  <el-pagination
+    background
+    layout="prev, pager, next"
+    :total="filteredRestaurants.length"
+    :page-size="pageSize"
+    :current-page="currentPage"
+    @current-change="handlePageChange"
+  />
+</div>
+
     </el-card>
+
+    
 
     <!-- 新增/编辑弹窗 -->
     <el-dialog 
@@ -347,7 +364,21 @@ const deleteRestaurant = async (id) => {
   } catch {
     // 用户取消删除
   }
+
 };
+
+  const currentPage = ref(1)
+  const pageSize = ref(8)   // 每页展示 8 条，可自由调整
+
+  const paginatedRestaurants = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredRestaurants.value.slice(start, start + pageSize.value)
+})
+
+  function handlePageChange(page) {
+    currentPage.value = page
+}
+
 
 // 加载数据
 const loadData = async () => {
@@ -575,5 +606,31 @@ onMounted(loadData);
   .search-section {
     max-width: none;
   }
+
+  .pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 12px;
+}
+
+:deep(.el-pagination.is-background .el-pager li) {
+  border-radius: 10px;
+  transition: 0.25s;
+}
+
+:deep(.el-pagination button),
+:deep(.el-pagination li) {
+  border-radius: 10px !important;
+  background-color: #fff6;
+  backdrop-filter: blur(6px);
+}
+
+:deep(.el-pagination .el-pager li.is-active) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(118, 75, 162, 0.3);
+}
+
 }
 </style>
