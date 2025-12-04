@@ -61,8 +61,9 @@ Python 依赖包列表
 pip install -r requirements.txt
 （如果怕污染的话可以先弄一个虚拟环境，喂给AI会教的）
 
-配置环境变量（.env文件）
-SQLALCHEMY_DATABASE_URI=sqlite:///app.db
+配置环境变量（.env文件，在backend目录下）
+SQLALCHEMY_DATABASE_URI=sqlite:///D:/KK/Internet_class_project/nearbyBite-njuse-ic25/backend/users.db
+
 JWT_SECRET_KEY=your_secret_key（可以用python随机生成一串）
 
 启动 Flask 应用：
