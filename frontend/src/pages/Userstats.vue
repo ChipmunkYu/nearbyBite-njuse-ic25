@@ -50,7 +50,7 @@
             <div class="stat-card restaurant-card">
               <div class="card-icon">🏪</div>
               <div class="card-content">
-                <div class="card-label">光顾餐馆数</div>
+                <div class="card-label">探索餐馆数</div>
                 <div class="card-value">{{ data.unique_restaurants || 0 }}</div>
                 <div class="card-tip">探索的美食地图</div>
               </div>
