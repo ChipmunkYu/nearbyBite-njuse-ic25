@@ -216,32 +216,39 @@ onMounted(async () => {
   restaurants.value = res.data.data;  
 });
 
-const getRecommendations = () => {
-  let filtered = restaurants.value;
-  
-  if (selectedTypes.value.length)
-    filtered = filtered.filter(r => selectedTypes.value.some(t => r.tags?.includes(t)));
-  
-  if (selectedFlavors.value.length)
-    filtered = filtered.filter(r => selectedFlavors.value.some(f => r.flavors?.includes(f)));
-  
-  filtered = filtered.filter(r => r.avg_price >= priceRange.value[0] && r.avg_price <= priceRange.value[1]);
+const getRecommendations = async () => {
+  try {
+    const params = {
+      price_min: priceRange.value[0],
+      price_max: priceRange.value[1],
+      types: selectedTypes.value.join(","),
+      // flavors: selectedFlavors.value.join(","),  // 你后端取消了 flavors
+    };
 
-  if (!filtered.length) {
-    results.value = [];
-  } else {
-    const randomIndex = Math.floor(Math.random() * filtered.length);
-    results.value = [{
-      id: filtered[randomIndex].id,
-      name: filtered[randomIndex].name,
-      location: filtered[randomIndex].address || '暂无地址',
-      price: filtered[randomIndex].avg_price || 0,
-      types: Array.isArray(filtered[randomIndex].tags) ? filtered[randomIndex].tags : [],
-      flavors: []
-    }];
+    const res = await request.get("/api/recommend/restaurants", { params });
+
+    if (!res.data || res.data.length === 0) {
+      results.value = [];
+    } else {
+      const r = res.data[0];
+      results.value = [
+        {
+          id: r.id,
+          name: r.name,
+          location: r.location || "暂无地址",
+          price: r.price,
+          types: r.types || [],
+          flavors: r.flavors || [], // 你这里可留可删
+        }
+      ];
+    }
+
+    showModal.value = true;
+  } catch (err) {
+    console.error("推荐接口失败：", err);
   }
-  showModal.value = true;
 };
+
 
 watch(showModal, async (visible) => {
   if (visible === true && results.value.length > 0) {
