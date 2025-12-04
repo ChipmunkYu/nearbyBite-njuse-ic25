@@ -33,6 +33,19 @@
         </div>
 
         <div class="action-buttons">
+          <!-- 新增：时间筛选 -->
+          <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="YYYY-MM-DD"
+            :clearable="true"
+            @change="applyFilters"
+            style="margin-right: 16px; width: 320px;"
+          />
+          
           <el-button
             type="danger"
             :disabled="selected.length === 0"
@@ -49,81 +62,115 @@
       </div>
 
       <!-- 数据表格 -->
-<div class="table-section">
-  <el-table
-    :data="records"
-    v-loading="loading"
-    style="width: 100%;"
-    empty-text="暂无浏览历史"
-    @selection-change="selected = $event"
-    class="styled-table"
-    border
-  >
-    <!-- 多选框 -->
-    <el-table-column type="selection" width="60" align="center" />
-
-    <!-- 餐馆名称 -->
-    <el-table-column
-      label="餐馆名称"
-      prop="restaurant_name"
-      align="center"
-      header-align="center"
-      min-width="240"
-    >
-      <template #default="{ row }">
-        <div class="cell restaurant-cell">
-          <span class="cell-icon">🍴</span>
-          <span class="cell-text">{{ row.restaurant_name }}</span>
-        </div>
-      </template>
-    </el-table-column>
-
-    <!-- 浏览时间 -->
-    <el-table-column
-      label="浏览时间"
-      prop="timestamp"
-      align="center"
-      header-align="center"
-      min-width="260"
-    >
-      <template #default="{ row }">
-        <div class="cell time-cell">
-          <span class="cell-icon">🕒</span>
-          <span class="cell-text">{{ formatTime(row.timestamp) }}</span>
-        </div>
-      </template>
-    </el-table-column>
-
-    <!-- 操作 -->
-    <el-table-column
-      label="操作"
-      align="center"
-      header-align="center"
-      width="150"
-    >
-      <template #default="{ row }">
-        <el-button
-          type="danger"
-          size="small"
-          @click="handleDelete(row.id)"
-          class="delete-btn"
+      <div class="table-section">
+        <el-table
+          :data="paginatedRecords"
+          v-loading="loading"
+          style="width: 100%;"
+          empty-text="暂无浏览历史"
+          @selection-change="selected = $event"
+          class="styled-table"
+          border
         >
-            🗑️ 删除
-            </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+          <!-- 多选框 -->
+          <el-table-column type="selection" width="60" align="center" />
+
+          <!-- 餐馆名称 -->
+          <el-table-column
+            label="餐馆名称"
+            prop="restaurant_name"
+            align="center"
+            header-align="center"
+            min-width="240"
+          >
+            <template #default="{ row }">
+              <div class="cell restaurant-cell">
+                <span class="cell-icon">🍴</span>
+                <span class="cell-text">{{ row.restaurant_name }}</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <!-- 浏览时间 -->
+          <el-table-column
+            label="浏览时间"
+            prop="timestamp"
+            align="center"
+            header-align="center"
+            min-width="260"
+          >
+            <template #default="{ row }">
+              <div class="cell time-cell">
+                <span class="cell-icon">🕒</span>
+                <span class="cell-text">{{ formatTime(row.timestamp) }}</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <!-- 操作 -->
+          <el-table-column
+            label="操作"
+            align="center"
+            header-align="center"
+            width="150"
+          >
+            <template #default="{ row }">
+              <el-button
+                type="danger"
+                size="small"
+                @click="handleDelete(row.id)"
+                class="delete-btn"
+              >
+                🗑️ 删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <!-- 新增：分页组件 -->
+        <div class="pagination-container" v-if="filteredRecords.length > 0">
+          <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="filteredRecords.length"
+            layout="total, sizes, prev, pager, next"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </div>
       </div>
 
-
       <!-- 空状态 -->
-      <div v-if="!loading && records.length === 0" class="empty-state">
-        <div class="empty-icon">📖</div>
-        <h3 class="empty-title">暂无浏览历史</h3>
-        <p class="empty-desc">开始使用随机推荐功能，系统将自动记录您的浏览足迹</p>
-        <el-button type="primary" class="empty-btn" @click="router.push('/recommend')">
+      <div v-if="!loading && filteredRecords.length === 0" class="empty-state">
+        <div v-if="records.length === 0" class="empty-icon">📖</div>
+        <div v-else class="empty-icon">🔍</div>
+        <h3 class="empty-title">
+          {{ records.length === 0 ? '暂无浏览历史' : '未找到符合条件的记录' }}
+        </h3>
+        <p class="empty-desc">
+          {{ records.length === 0 
+            ? '开始使用随机推荐功能，系统将自动记录您的浏览足迹' 
+            : '请调整筛选条件查看其他记录' 
+          }}
+        </p>
+        <el-button 
+          v-if="records.length === 0" 
+          type="primary" 
+          class="empty-btn" 
+          @click="router.push('/recommend')"
+        >
           <span class="btn-icon">🎲</span>
           <span class="btn-text">去随机推荐</span>
+        </el-button>
+        <el-button 
+          v-else 
+          type="primary" 
+          class="empty-btn" 
+          @click="resetFilters"
+        >
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">重置筛选</span>
         </el-button>
       </div>
 
@@ -135,13 +182,18 @@
             <div class="stats-label">历史记录统计</div>
             <div class="stats-values">
               <span class="stat-item">
-                <span class="stat-value">{{ records.length }}</span>
+                <span class="stat-value">{{ filteredRecords.length }}</span>
                 <span class="stat-label">条记录</span>
               </span>
               <span class="stat-separator">•</span>
               <span class="stat-item">
                 <span class="stat-value">{{ selected.length }}</span>
                 <span class="stat-label">条选中</span>
+              </span>
+              <span v-if="dateRange" class="stat-item">
+                <span class="stat-separator">•</span>
+                <span class="stat-value">{{ pageSize }}</span>
+                <span class="stat-label">条/页</span>
               </span>
             </div>
           </div>
@@ -152,7 +204,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getHistory, deleteHistory } from '@/utils/api'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
@@ -166,10 +218,37 @@ const records = ref([])
 const loading = ref(false)
 const selected = ref([])
 
+// 新增：筛选和分页相关
+const dateRange = ref(null)
+const currentPage = ref(1)
+const pageSize = ref(10)
+
+const filteredRecords = computed(() => {
+  if (!dateRange.value || dateRange.value.length !== 2) {
+    return records.value
+  }
+
+  const [startDate, endDate] = dateRange.value
+  const start = new Date(startDate + ' 00:00:00')
+  const end = new Date(endDate + ' 23:59:59')
+  
+  return records.value.filter(item => {
+    const itemDate = new Date(item.timestamp)
+    return itemDate >= start && itemDate <= end
+  })
+})
+
+const paginatedRecords = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return filteredRecords.value.slice(start, end)
+})
+
 function formatTime(isoStr) {
   if (!isoStr) return ''
 
-  const date = new Date(isoStr) 
+  const date = new Date(isoStr)
+  date.setHours(date.getHours() + 8)
 
   const y = date.getFullYear()
   const m = String(date.getMonth() + 1).padStart(2, '0')
@@ -191,6 +270,25 @@ async function fetchHistory() {
   } finally {
     loading.value = false
   }
+}
+
+function applyFilters() {
+  currentPage.value = 1
+}
+
+function resetFilters() {
+  dateRange.value = null
+  currentPage.value = 1
+  selected.value = []
+}
+
+function handleSizeChange(val) {
+  pageSize.value = val
+  currentPage.value = 1
+}
+
+function handleCurrentChange(val) {
+  currentPage.value = val
 }
 
 async function handleDelete(id) {
@@ -244,6 +342,15 @@ onMounted(fetchHistory)
 </script>
 
 <style scoped>
+/* 原有所有样式完全保持不变！ */
+/* 我只添加这一个样式用于分页 */
+.pagination-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 完全保留你原来的所有样式，从下面这里开始... */
 .history-container {
   display: flex;
   justify-content: center;
