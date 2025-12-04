@@ -9,7 +9,7 @@
 
     <div class="feedback-card">
       <h1 class="title">💬 联系开发团队</h1>
-      <p class="subtitle">如果你在使用过程中遇到问题，欢迎通过以下邮箱联系我们。</p>
+      <p class="subtitle">如果你在使用过程中遇到问题，欢迎通过以下邮箱联系我们。顺序不分先后</p>
 
       <div class="email-list">
         <div 
@@ -42,7 +42,7 @@ const emails = ref([
   { role: "开发人员A", address: "1287513193@qq.com" },
   { role: "开发人员B", address: "backend@example.com" },
   { role: "开发人员C", address: "pm@example.com" },
-  { role: "开发人员D", address: ""}
+  { role: "开发人员D", address: "3380077139@qq.com"}
 ]);
 
 function copy(text) {
