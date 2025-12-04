@@ -16,8 +16,6 @@ from src.models.history import History  # 加入历史模型（不写也能建�
 from src.models.restaurant import Restaurant  # 加入餐厅模型
 # 路由蓝图：引入历史记录接口
 from src.routes.users import users_bp  # 用户相关接口
-
-
 import os
 from dotenv import load_dotenv
 
@@ -44,6 +42,10 @@ def create_app(testing=False):
     app.register_blueprint(history_bp)
     app.register_blueprint(restaurants_bp)
     app.register_blueprint(stats_bp)
+
+    if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        from crawler.sources.sheduler import start_scheduler
+        start_scheduler(app)
 
     return app
 
