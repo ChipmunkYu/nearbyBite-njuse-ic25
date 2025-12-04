@@ -57,9 +57,11 @@ def get_history():
 @history_bp.route('/api/users/me/history/<history_id>', methods=['DELETE'])
 @jwt_required()
 def delete_history(history_id):
-    uid = get_jwt_identity()
+    uid = int(get_jwt_identity())
     #record = History.query.get(history_id)
     record = db.session.get(History, history_id)
+    print("DEBUG DELETE:", "uid=", uid, "record_user_id=", record.user_id)
+
     if not record:
         return jsonify({"message": "record not found"}), 404
 
