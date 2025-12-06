@@ -1,4 +1,6 @@
 <template>
+  <BackFirstButton/>
+
   <div class="feedback-container">
 
     <div class="background">
@@ -10,7 +12,7 @@
     <div class="feedback-card">
       <h1 class="title">💬 联系开发团队</h1>
       <p class="subtitle">如果你在使用过程中遇到问题，欢迎通过以下邮箱联系我们。顺序不分先后</p>
-
+      <p class="subtitle">我们的项目地址是 https://github.com/ChipmunkYu/nearbyBite-njuse-ic25</p>
       <div class="email-list">
         <div 
           v-for="(item, index) in emails" 
@@ -37,6 +39,7 @@
 <script setup>
 import { ref } from "vue";
 import { ElMessage } from "element-plus";
+import BackFirstButton from '@/components/BackFirstButton.vue'
 
 const emails = ref([
   { role: "开发人员A", address: "1287513193@qq.com" },

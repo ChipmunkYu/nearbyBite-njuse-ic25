@@ -1,4 +1,5 @@
 <template>
+  <BackFirstButton/>
   <div class="restaurant-page">
     <!-- 页面头部 -->
     <div class="page-header">
@@ -261,6 +262,7 @@
 import { ref, computed, onMounted } from "vue";
 import request from "@/utils/api/request";
 import { ElMessage, ElMessageBox } from "element-plus";
+import BackFirstButton from '@/components/BackFirstButton.vue'
 import {
   Food,
   Search,

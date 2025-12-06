@@ -1,5 +1,6 @@
 <template>
-  <div class="recommend-container">
+  <BackFirstButton/> 
+ <div class="recommend-container">
     <!-- 背景装饰 -->
     <div class="background">
       <div class="floating-food">🍕</div>
@@ -32,7 +33,7 @@
                 v-model="priceRange"
                 range
                 :min="0"
-                :max="200"
+                :max="500"
                 :step="1"
                 show-tooltip
                 :format-tooltip="(value) => `${value}元`"
@@ -199,13 +200,13 @@ import { ref, onMounted, watch } from "vue";
 import { useUserStore } from '@/stores/user'
 import { addHistory } from '@/utils/api/history'
 import request from "@/utils/api/request";
-// 这里似乎还有一些问题，先不管了，跑通再说
-const foodTypes = ["快餐", "火锅", "烧烤", "甜品", "奶茶", "小吃", "川菜", "韩餐", "日料", "西餐", "轻食"];
+import BackFirstButton from '@/components/BackFirstButton.vue'
+const foodTypes = ["快餐", "火锅", "烧烤", "甜品", "奶茶", "小吃", "川菜", "韩餐", "日料", "西餐", "轻食","中餐"];
 const flavors = ["清淡", "重口味", "辣", "甜", "咸香", "麻辣", "酸爽", "健康轻食"];
 
 const selectedTypes = ref([]);
 const selectedFlavors = ref([]);
-const priceRange = ref([0, 200]);
+const priceRange = ref([0, 500]);
 const results = ref([]);
 const showModal = ref(false);
 const userStore = useUserStore();

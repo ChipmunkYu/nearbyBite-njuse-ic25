@@ -1,4 +1,5 @@
 <template>
+  <BackFirstButton/>
   <div class="help-container">
     <!-- 背景装饰 -->
     <div class="background">
@@ -254,6 +255,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import BackFirstButton from '@/components/BackFirstButton.vue'
 
 const router = useRouter();
 const activeNames = ref(['1']);

@@ -1,4 +1,5 @@
 <template>
+  <BackFirstButton/>
   <div class="stats-container">
     <!-- 背景装饰 -->
     <div class="background">
@@ -176,6 +177,7 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import request from '@/utils/api/request'
 import { ElMessage } from 'element-plus'
+import BackFirstButton from '@/components/BackFirstButton.vue'
 
 const data = ref({
   total_visits: 0,

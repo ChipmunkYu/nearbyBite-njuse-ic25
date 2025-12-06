@@ -1,4 +1,5 @@
 <template>
+  <BackFirstButton/>
   <div class="history-container">
     <!-- 背景装饰 -->
     <div class="background">
@@ -210,6 +211,8 @@ import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
+import BackFirstButton  from '@/components/BackFirstButton.vue'
+
 const router = useRouter()
 const userStore = useUserStore()
 const userId = userStore.user?.id

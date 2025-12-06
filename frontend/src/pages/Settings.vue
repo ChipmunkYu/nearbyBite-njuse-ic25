@@ -1,4 +1,5 @@
 <template>
+  <BackFirstButton/>
   <div class="settings-container">
     <!-- 背景装饰 -->
     <div class="background">
@@ -214,13 +215,14 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { User, Lock, Key, Check, Refresh } from '@element-plus/icons-vue'
 import request from '@/utils/api/request'
+import BackFirstButton from '@/components/BackFirstButton.vue'
 
-// ---------------------------------
+
 // 表单数据
-// ---------------------------------
+
 const userForm = ref({
-  user_id: '',     // 随机生成ID（只读）
-  username: ''     // 用户名（可修改）
+  user_id: '',     
+  username: ''   
 })
 
 const pwdForm = ref({
@@ -229,9 +231,9 @@ const pwdForm = ref({
   confirmPwd: ''
 })
 
-// ---------------------------------
+
 // 校验规则
-// ---------------------------------
+
 const rules = {
   username: [
     { required: true, message: '用户名不能为空', trigger: 'blur' },
@@ -261,9 +263,8 @@ const pwdRules = {
 const userFormRef = ref()
 const pwdFormRef = ref()
 
-// ---------------------------------
-// 加载用户信息 /api/users/me
-// ---------------------------------
+// 加载用户信息 
+
 async function loadUserInfo() {
   try {
     const res = await request.get('/api/users/me')
@@ -281,9 +282,9 @@ async function loadUserInfo() {
   }
 }
 
-// ---------------------------------
+
 // 修改用户名 /api/users/me (PUT)
-// ---------------------------------
+
 async function updateUserInfo() {
   userFormRef.value.validate(async (valid) => {
     if (!valid) return
@@ -304,9 +305,9 @@ async function updateUserInfo() {
   })
 }
 
-// ---------------------------------
+
 // 修改密码 /api/users/me/password (POST)
-// ---------------------------------
+
 async function changePassword() {
   pwdFormRef.value.validate(async (valid) => {
     if (!valid) return
