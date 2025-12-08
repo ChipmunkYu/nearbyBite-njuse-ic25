@@ -7,6 +7,7 @@ from src.utils.recommend_query import (
     plane_distance,
     sample_restaurants
 )
+from flask_jwt_extended import jwt_required
 
 recommend_bp = Blueprint("recommend", __name__, url_prefix="/api/recommend")
 
@@ -15,6 +16,7 @@ _LAST_CAP = 10
 
 
 @recommend_bp.route("/restaurants", methods=["GET"])
+@jwt_required()
 def recommend():
 
     # === 参数 ===

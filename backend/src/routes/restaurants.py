@@ -3,11 +3,12 @@
 from flask import Blueprint, request, jsonify
 from src.extensions import db
 from src.models.restaurant import Restaurant
-
+from flask_jwt_extended import jwt_required
 restaurants_bp = Blueprint("restaurants", __name__, url_prefix="/api/restaurants")
 
 
 @restaurants_bp.get("")
+@jwt_required()
 def get_restaurants():
     """GET /api/restaurants?page=1&size=10"""
     page = int(request.args.get("page", 1))
@@ -35,6 +36,7 @@ def get_restaurants():
 
 
 @restaurants_bp.post("")
+@jwt_required()
 def create_restaurant():
     data = request.json
     r = Restaurant(
@@ -54,6 +56,7 @@ def create_restaurant():
 
 
 @restaurants_bp.put("/<int:rest_id>")
+@jwt_required()
 def update_restaurant(rest_id):
     r = Restaurant.query.get_or_404(rest_id)
     data = request.json
@@ -71,6 +74,7 @@ def update_restaurant(rest_id):
 
 
 @restaurants_bp.delete("/<int:rest_id>")
+@jwt_required()
 def delete_restaurant(rest_id):
     r = Restaurant.query.get_or_404(rest_id)
     db.session.delete(r)
